@@ -1,0 +1,24 @@
+{
+  "name": "aurora-game",
+  "version": "1.4.44",
+  "private": true,
+  "description": "Aurora Game - игровой клиент Aurora с публичным игровым сообществом",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "npm run test:community-cursor && npm run test:livekit && npm run test:window-security && npm run test:inline-handlers && npm run test:localserver-security && npm run test:community-session && npm run test:community-dm-state && npm run test:community-proxy && npm run test:community-token-store",
+    "test:community-cursor": "node ../tests/test_community_cursor.js",
+    "test:livekit": "node ../tests/test_livekit_renderer.js",
+    "test:window-security": "node ../tests/test_window_security.js",
+    "test:inline-handlers": "node ../tests/test_renderer_inline_handlers.js",
+    "test:localserver-security": "node ../tests/test_localserver_origin_security.js",
+    "test:community-session": "node ../tests/test_community_session.js",
+    "test:community-dm-state": "node ../tests/test_community_dm_state.js",
+    "test:community-proxy": "node ../tests/test_community_proxy.js",
+    "test:community-token-store": "node ../tests/test_community_token_store.js",
+    "build:portable": "powershell -NoProfile -ExecutionPolicy Bypass -File build-portable.ps1"
+  },
+  "devDependencies": {
+    "electron": "^45.2.1"
+  }
+}

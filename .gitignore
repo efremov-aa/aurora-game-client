@@ -1,0 +1,55 @@
+# Aurora Game — игровой клиент (Discord-like на Electron)
+
+# Сборки и дистрибутивы
+electron/dist/
+electron/node_modules/
+*.exe
+*.zip
+*.msi
+*.dmg
+*.pkg
+
+# Electron / Node
+node_modules/
+package-lock.json
+.npm/
+.yarn-integrity
+
+# Python (gamehub, тесты)
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.db
+.env
+.venv/
+venv/
+
+# Логи и отладочные файлы
+*.log
+*.tmp
+*.bak*
+*.pid
+
+# Конфигурация клиента (секреты, токены)
+electron/src/main/Aurora/
+data/
+client.json
+media-keys.json
+game_media.json
+*.aurora_key
+*.aurora_key.lock
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Отладочные артефакты разработчика
+diag.txt
+audit_stubs.txt
+stub_result.txt

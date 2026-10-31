@@ -1,0 +1,5 @@
+{
+  "server_url": "wss://5.141.235.56.sslip.io:7443",
+  "api_key": "LIVEKIT_API_KEY",
+  "api_secret": "LIVEKIT_API_SECRET"
+}
