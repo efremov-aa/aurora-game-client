@@ -16,7 +16,7 @@ cat /home/ai/.config/aurora-game-livekit/livekit.yaml
 ```yaml
 port: 7880
 bind_addresses:
-  - 10.1.0.238
+  - 127.0.0.1
 keys:
   aurora_abc123def456: somerandomsecretkey789...
 rtc:
@@ -71,8 +71,8 @@ curl -s -X POST https://5.141.235.56.sslip.io:8445/game/media-token \
 ## Шаг 5: Проверить порты на шлюзе (10.1.0.1)
 
 На шлюзе должны быть проброшены:
-- **TCP 7443 → 10.1.0.238:7443** (WSS сигналинг через Caddy)
-- **UDP 7882 → 10.1.0.238:7882** (WebRTC ICE медиа)
+- **TCP 7443 → 127.0.0.1:7443** (WSS сигналинг через Caddy)
+- **UDP 7882 → 127.0.0.1:7882** (WebRTC ICE медиа)
 
 Проверка с внешней машины:
 ```bash
