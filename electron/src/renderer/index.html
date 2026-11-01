@@ -5698,7 +5698,7 @@ const SETTINGS_TABS = {
     title: 'Обновления',
     html: () => `
       <h3>Автообновление</h3>
-      <div class="set-row"><div class="sr-label"><b>Текущая версия</b><small>${escapeHtml(appVersion)}</small></div><span id="updateCurrentVersion">${escapeHtml(appVersion)}</span></div>
+      <div class="set-row"><div class="sr-label"><b>Текущая версия</b><small>${escapeHtml(APP_VERSION)}</small></div><span id="updateCurrentVersion">${escapeHtml(APP_VERSION)}</span></div>
       <div class="set-row"><div class="sr-label"><b>Проверка обновлений</b><small>Через GitHub Releases (efremov-aa/aurora-game-client)</small></div>
         <button class="btn btn-primary btn-sm" onclick="checkForUpdates()">Проверить сейчас</button></div>
       <div id="updateStatus" class="hint" style="margin-top:8px;"></div>
