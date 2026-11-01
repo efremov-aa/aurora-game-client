@@ -8702,7 +8702,7 @@ async function checkForUpdates() {
   if (avail) avail.style.display = 'none';
   if (progress) progress.style.display = 'none';
   try {
-    const result = await window.aurora.invoke('aurora:update-check');
+    const result = await window.aurora.updateCheck();
     if (!result.ok) {
       if (status) status.textContent = 'Ошибка: ' + (result.error || 'неизвестно');
       return;
@@ -8741,7 +8741,7 @@ async function downloadUpdate() {
   if (progress) progress.style.display = '';
   if (downloaded) downloaded.textContent = '';
   try {
-    const result = await window.aurora.invoke('aurora:update-download');
+    const result = await window.aurora.updateDownload();
     if (!result.ok) {
       throw new Error(result.error || 'не удалось скачать');
     }
@@ -8773,8 +8773,6 @@ window.aurora.invoke = function (channel, ...args) {
     ipcRenderer.send('aurora-invoke', channel, id, ...args);
   });
 };
-
-
 </script>
 </body>
 </html>

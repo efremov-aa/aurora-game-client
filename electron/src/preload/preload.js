@@ -41,4 +41,8 @@ contextBridge.exposeInMainWorld('aurora', {
   importCommunityIdentity: () => ipcRenderer.invoke('aurora:import-community-identity'),
   /** Управление окном. */
   window: (action) => ipcRenderer.send('aurora:window', action),
+  /** Проверить обновления на GitHub Releases. */
+  updateCheck: () => ipcRenderer.invoke('aurora:update-check'),
+  /** Скачать свежий архив обновления. */
+  updateDownload: () => ipcRenderer.invoke('aurora:update-download'),
 });
