@@ -2,7 +2,7 @@
 
 **[English version below](#english-version)**
 
-Aurora Game — это игровой мессенджер в стиле Discord, встроенный в экосистему Aurora Proxy. Голос, чат, серверы, друзья, вложения — всё работает на вашем железе или на публичном мастере, без необходимости в VPN и обходах блокировок.
+Aurora Game — это игровой мессенджер в стиле Discord. Голос, чат, серверы, друзья, вложения — всё работает без необходимости в VPN и обходах блокировок.
 
 ## Возможности
 
@@ -48,7 +48,6 @@ Aurora Game — это игровой мессенджер в стиле Discord
 - Анонимная регистрация — только ник, без пароля и почты
 - Токен профиля хранится в зашифрованном хранилище Windows
 - Все запросы к игровому API через HTTPS с Bearer-токеном
-- Локальный интерфейс общается с панелью Aurora через обход Origin-проверки
 - iframe-защита, проверка Host/Origin/Sec-Fetch-Site
 
 ### 🔄 Автообновление
@@ -56,7 +55,7 @@ Aurora Game — это игровой мессенджер в стиле Discord
 - Проверка SHA-256 загруженного архива
 - Скачивание обновления и перезапуск приложения
 
-### 🖥️Системная интеграция (Windows)
+### 🖥️ Системная интеграция (Windows)
 - Системный трей — крестик скрывает окно, не закрывает приложение
 - Автозапуск вместе с Windows (свёрнутым в трей)
 - Портативная сборка — не требует установки
@@ -64,7 +63,7 @@ Aurora Game — это игровой мессенджер в стиле Discord
 ## Установка
 
 ### Быстрый старт (без установки)
-1. Скачайте последний `AuroraGame-win32-x64-test-*.zip` из [Releases](https://github.com/efremov-aa/aurora-game-client/releases)
+1. Скачайте последний `AuroraGame-win32-x64.zip` из [Releases](https://github.com/efremov-aa/aurora-game-client/releases)
 2. Распакуйте в любую папку
 3. Запустите `AuroraGame.exe`
 4. Зарегистрируйте профиль на публичном игровом сервере
@@ -82,16 +81,15 @@ Aurora Game — это игровой мессенджер в стиле Discord
 
 ## Голос и видео для внешних пользователей
 
-Для голосовых звонков между разными сетями на мастер-сервере должен быть настроен LiveKit SFU с публичным WSS и UDP ICE. См. [`VOICE_SERVER.md`](VOICE_SERVER.md) и [`SETUP_VOICE_MASTER.md`](SETUP_VOICE_MASTER.md).
+Для голосовых звонков между разными сетями на медиасервере должен быть настроен LiveKit SFU с публичным WSS и UDP ICE. См. [`VOICE_SERVER.md`](VOICE_SERVER.md).
 
-Клиентские ПК не требуют открытия портов — достаточно исходящего интернета.
+Клиентские ПК не требуют открытия портов — достаточно исходящего интернета. Клиент подключается к публичному медиасерверу автоматически, дополнительная настройка не требуется.
 
 ## Технологии
 
 - **Electron 45.2.1** — оболочка приложения
 - **LiveKit 1.13.11** — голос, видео, демонстрация экрана
-- **Node.js** — локальный сервер интерфейса и прокси к панели Aurora
-- **SQLite** — локальная база игровых данных на макрое
+- **Node.js** — локальный сервер интерфейса
 - **Inno Setup 7** — установщик Windows
 
 ## Тестирование
@@ -114,7 +112,7 @@ npm test
 
 ## English
 
-Aurora Game is a Discord-style gaming messenger integrated into the Aurora Proxy ecosystem. Voice, chat, servers, friends, attachments — everything runs on your own hardware or on the public master, without needing VPN or blocks bypass.
+Aurora Game is a Discord-style gaming messenger. Voice, chat, servers, friends, attachments — everything works without needing VPN or blocks bypass.
 
 ## Features
 
@@ -160,7 +158,6 @@ Aurora Game is a Discord-style gaming messenger integrated into the Aurora Proxy
 - Anonymous registration — nickname only, no password or email
 - Profile token stored in encrypted Windows storage
 - All game API requests over HTTPS with Bearer token
-- Local interface communicates with Aurora panel bypassing Origin check
 - iframe protection, Host/Origin/Sec-Fetch-Site validation
 
 ### 🔄 Auto-Update
@@ -175,7 +172,7 @@ Aurora Game is a Discord-style gaming messenger integrated into the Aurora Proxy
 
 ## Quick Start
 
-1. Download latest `AuroraGame-win32-x64-test-*.zip` from [Releases](https://github.com/efremov-aa/aurora-game-client/releases)
+1. Download latest `AuroraGame-win32-x64.zip` from [Releases](https://github.com/efremov-aa/aurora-game-client/releases)
 2. Extract to any folder
 3. Run `AuroraGame.exe`
 4. Register a profile on the public game server
@@ -194,16 +191,15 @@ Use `installer/install.iss` to build via Inno Setup 7.
 
 ## Voice and Video for External Users
 
-For voice calls between different networks, the master server must have LiveKit SFU configured with public WSS and UDP ICE. See [`VOICE_SERVER.md`](VOICE_SERVER.md) and [`SETUP_VOICE_MASTER.md`](SETUP_VOICE_MASTER.md).
+For voice calls between different networks, the media server must have LiveKit SFU configured with public WSS and UDP ICE. See [`VOICE_SERVER.md`](VOICE_SERVER.md).
 
-Client PCs don't require port forwarding — just outgoing internet access.
+Client PCs don't require port forwarding — just outgoing internet access. The client connects to the public media server automatically, no additional setup needed.
 
 ## Technologies
 
 - **Electron 45.2.1** — application shell
 - **LiveKit 1.13.11** — voice, video, screen sharing
-- **Node.js** — local interface server and proxy to Aurora panel
-- **SQLite** — local game database on master
+- **Node.js** — local interface server
 - **Inno Setup 7** — Windows installer
 
 ## Testing
