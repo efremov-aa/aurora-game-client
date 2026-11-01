@@ -5732,6 +5732,11 @@ function renderSettingsTab(key) {
   if (tab) document.getElementById('settingsContent').innerHTML = tab.html();
   if (key === 'account') auroraLoadClientConfig();
   if (key === 'appearance') loadLaunchAtLogin();
+  if (key === 'updates') {
+    document.getElementById('updateCurrentVersion').textContent = APP_VERSION;
+    const status = document.getElementById('updateStatus');
+    if (status) status.textContent = 'Проверка обновлений при старте клиента…';
+  }
 }
 
 async function loadLaunchAtLogin() {
@@ -8678,19 +8683,6 @@ function showUserPop(e, userId) {
    ============================================================ */
 let updateChecking = false;
 let updateDownloading = false;
-
-function renderSettingsTab(key) {
-  document.querySelectorAll('#settingsNav .sn-item').forEach(el =>
-    el.classList.toggle('active', el.dataset.tab === key));
-  const tab = SETTINGS_TABS[key];
-  if (tab) document.getElementById('settingsContent').innerHTML = tab.html();
-  if (key === 'account') auroraLoadClientConfig();
-  if (key === 'updates') {
-    document.getElementById('updateCurrentVersion').textContent = APP_VERSION;
-    const status = document.getElementById('updateStatus');
-    if (status) status.textContent = 'Проверка обновлений при старте клиента…';
-  }
-}
 
 async function checkForUpdates() {
   if (updateChecking) return;
