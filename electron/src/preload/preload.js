@@ -45,4 +45,6 @@ contextBridge.exposeInMainWorld('aurora', {
   updateCheck: () => ipcRenderer.invoke('aurora:update-check'),
   /** Скачать свежий архив обновления. */
   updateDownload: () => ipcRenderer.invoke('aurora:update-download'),
+  /** Скачать и применить обновление с перезапуском. */
+  updateApply: () => ipcRenderer.invoke('aurora:update-apply'),
 });

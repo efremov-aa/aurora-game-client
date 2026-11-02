@@ -2420,7 +2420,7 @@ const STATE = {
   quickSwitcherIndex: 0,
 };
 let LAUNCH_AT_LOGIN = { supported: false, enabled: false, busy: false };
-let APP_VERSION = '1.4.47';
+let APP_VERSION = '1.4.48';
 
 /* Локальный профиль клиента переживает перезапуск и не требует панели. */
 const AURORA_LOCAL_PROFILE_KEY = 'aurora_game_profile_v1';
@@ -5997,6 +5997,7 @@ const SETTINGS_TABS = {
           <div id="updateNotes" style="margin-top:6px;color:var(--text2);font-size:13px;line-height:1.5;"></div>
           <div style="display:flex;gap:8px;margin-top:12px;">
             <button class="btn btn-primary" id="updateDownloadBtn" onclick="downloadUpdate()">Скачать обновление</button>
+            <button class="btn btn-primary btn-sm" onclick="downloadAndApplyUpdate()">Установить и перезапустить</button>
             <button class="btn btn-ghost btn-sm" onclick="closeModal('settingsModal')">Позже</button>
           </div>
         </div>
@@ -8732,6 +8733,29 @@ var __auroraInit = function () {
   window.setTimeout(function () {
     try { loadAurora(); } catch (e) { /* экран локального режима останется доступен */ }
   }, 250);
+
+  /* Автопроверка обновлений при старте приложения */
+  try {
+    window.aurora.updateCheck().then(function (r) {
+      if (!r.ok || !r.available) return;
+      const s = document.getElementById('updateStatus');
+      const a = document.getElementById('updateAvailable');
+      if (s) s.textContent = 'Доступна версия ' + r.version + ' (текущая ' + r.currentVersion + ')';
+      if (a) {
+        a.style.display = '';
+        const nv = document.getElementById('updateNewVersion');
+        const nn = document.getElementById('updateNotes');
+        if (nv) nv.textContent = r.version;
+        if (nn) nn.textContent = r.notes || '';
+        const btn = document.getElementById('updateDownloadBtn');
+        if (btn) btn.onclick = downloadUpdate;
+        // Показываем кнопку установки и перезапуска
+        const applyBtn = document.getElementById('updateApplyBtn');
+        if (applyBtn) applyBtn.style.display = 'inline-block';
+        applyBtn.onclick = downloadAndApplyUpdate;
+      }
+    }).catch(function () { /* обновление не критично для запуска */ });
+  } catch (e) { /* обновление не критично */ }
 };
 function init() {
   restoreProfileEventTheme();
@@ -9063,6 +9087,35 @@ window.aurora.invoke = function (channel, ...args) {
     ipcRenderer.on('aurora-invoke-reply-' + id, handler);
     ipcRenderer.send('aurora-invoke', channel, id, ...args);
   });
+};
+
+/* Автодownload и применение обновления с перезапуском. */
+async function downloadAndApplyUpdate() {
+  const btn = document.getElementById('updateDownloadBtn');
+  const status = document.getElementById('updateStatus');
+  const progress = document.getElementById('updateProgress');
+  const progressText = document.getElementById('updateProgressText');
+  const progressBar = document.getElementById('updateProgressBar');
+  const downloaded = document.getElementById('updateDownloaded');
+  if (btn) btn.disabled = true;
+  if (progress) progress.style.display = '';
+  if (progressText) progressText.textContent = 'Скачивание…';
+  if (progressBar) progressBar.style.width = '0%';
+  try {
+    const result = await window.aurora.updateApply();
+    if (!result.ok) throw new Error(result.error || 'не удалось скачать');
+    if (status) status.textContent = 'Обновление скачано: ' + result.version + '. Перезапуск…';
+    if (downloaded) downloaded.textContent = 'Готово к установке.';
+    if (progressText) progressText.textContent = '100%';
+    if (progressBar) progressBar.style.width = '100%';
+    // updateApply уже вызывает app.quit() в главном процессе после запуска bat
+    toast('Обновление установлено. Перезапуск…', 'ok');
+  } catch (e) {
+    if (status) status.textContent = 'Ошибка: ' + (e && e.message || e);
+    if (downloaded) downloaded.textContent = 'Не удалось скачать: ' + (e && e.message || e);
+    if (btn) btn.disabled = false;
+    toast('Не удалось обновить: ' + (e && e.message || e), 'bad');
+  }
 };
 </script>
 </body>

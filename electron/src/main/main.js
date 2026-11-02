@@ -330,6 +330,24 @@ function registerIpc() {
       size: downloaded.size,
     })).catch((err) => ({ ok: false, error: String(err && err.message || err) }));
   });
+  ipcMain.handle('aurora:update-apply', async () => {
+    if (!gitHubUpdater) return { ok: false, error: 'Обновления не настроены' };
+    const userDataPath = app.getPath('userData');
+    const appPath = path.dirname(process.execPath);
+    try {
+      const result = await gitHubUpdater.prepareUpdate(userDataPath, appPath);
+      const { spawn } = require('child_process');
+      spawn('cmd.exe', ['/c', result.batPath], {
+        detached: true,
+        stdio: 'ignore',
+        windowsHide: true
+      }).unref();
+      app.quit();
+      return { ok: true, version: result.version };
+    } catch (err) {
+      return { ok: false, error: String(err && err.message || err) };
+    }
+  });
   /* Универсальный вызов методов главного процесса из renderer. */
   ipcMain.on('aurora-invoke', (_e, channel, invokeId, ...args) => {
     const handler = ipcMain.handle(channel, async () => {

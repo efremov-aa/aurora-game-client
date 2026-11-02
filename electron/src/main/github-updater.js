@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const https = require('https');
 const { Transform, Readable } = require('stream');
 const { pipeline } = require('stream/promises');
+const { spawn } = require('child_process');
 
 const GITHUB_OWNER = 'efremov-aa';
 const GITHUB_REPOSITORY = 'aurora-game-client';
@@ -176,4 +177,72 @@ function createGitHubUpdater(options) {
   return { check, download };
 }
 
-module.exports = { createGitHubUpdater, isNewerVersion, safeRelease, downloadHttps };
+function findAppDir(dir) {
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      const testPath = path.join(dir, entry.name, 'AuroraGame.exe');
+      if (fs.existsSync(testPath)) return path.join(dir, entry.name);
+    }
+  }
+  return dir;
+}
+
+async function prepareUpdate(userDataPath, appPath) {
+  const result = await check();
+  if (!result.ok || !result.available || !cached) {
+    throw new Error(result.error || (result.available ? 'Выпуск не получен' : 'Установлена последняя версия'));
+  }
+
+  const updateDir = path.join(userDataPath, 'updates');
+  fs.mkdirSync(updateDir, { recursive: true });
+
+  const zipPath = path.join(updateDir, 'AuroraGame-' + cached.version + '.zip');
+  try { fs.unlinkSync(zipPath); } catch (e) { if (e.code !== 'ENOENT') throw e; }
+
+  await downloadHttps(cached.downloadUrl, zipPath, cached.size, cached.sha256);
+
+  const extractDir = path.join(updateDir, 'extract-' + cached.version);
+  fs.mkdirSync(extractDir, { recursive: true });
+
+  await new Promise((resolve, reject) => {
+    const ps = spawn('powershell.exe', [
+      '-NoProfile', '-ExecutionPolicy', 'Bypass',
+      '-Command', 'Expand-Archive -Path "' + zipPath + '" -DestinationPath "' + extractDir + '" -Force'
+    ]);
+    ps.on('close', code => code === 0 ? resolve() : reject(new Error('Распаковка не удалась, код ' + code)));
+    ps.on('error', reject);
+  });
+
+  const appDir = findAppDir(extractDir);
+
+  const batPath = path.join(updateDir, 'update.bat');
+  const appExe = path.join(appPath, 'AuroraGame.exe');
+  const batContent = [
+    '@echo off',
+    'setlocal enabledelayedexpansion',
+    '',
+    'echo Ожидание закрытия Aurora Game...',
+    'timeout /t 5 /nobreak >nul',
+    '',
+    'tasklist /FI "IMAGENAME eq AuroraGame.exe" 2>nul | findstr /i "AuroraGame.exe" >nul',
+    'if %errorlevel% equ 0 (',
+    '  taskkill /F /IM AuroraGame.exe >nul 2>&1',
+    '  timeout /t 3 /nobreak >nul',
+    ')',
+    '',
+    'robocopy "' + appDir + '" "' + appPath + '" /E /MT /NFL /NDL /NJH /NJS',
+    '',
+    'start "" "' + appExe + '"',
+    '',
+    'rmdir /s /q "' + extractDir + '" >nul 2>&1',
+    'del "' + zipPath + '" >nul 2>&1',
+    'del "%~f0" >nul 2>&1'
+  ].join('\r\n');
+
+  fs.writeFileSync(batPath, batContent, { encoding: 'utf8' });
+
+  return { version: cached.version, batPath: batPath, notes: cached.notes };
+}
+
+module.exports = { createGitHubUpdater, isNewerVersion, safeRelease, downloadHttps, prepareUpdate };

@@ -4,7 +4,7 @@
 #define MyAppName "Aurora Game"
 #define MyAppPublisher "efremov-aa"
 #define MyAppURL "https://github.com/efremov-aa/aurora-game-client"
-#define MyAppVersion "1.4.47"
+#define MyAppVersion "1.4.48"
 #define MyAppExeName "AuroraGame.exe"
 
 [Setup]
@@ -36,7 +36,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "F:\AI_pro\прокси сервер\_github\aurora_game\electron\dist\AuroraGame-win32-x64-test-v91\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+Source: "F:\AI_pro\прокси сервер\_github\aurora_game\electron\dist\AuroraGame-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 ; NOTE: Локальный LiveKit sidecar не включается — работает только на 127.0.0.1
 ; и не нужен для публичного голоса. Публичный медиасервер на макрое.
 
