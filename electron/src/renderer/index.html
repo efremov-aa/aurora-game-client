@@ -1171,10 +1171,190 @@ a:hover { text-decoration:underline; }
 /* ============================================================
    VOICE CHANNEL VIEW
    ============================================================ */
-.voice-screen {
-  flex:1; display:flex; flex-direction:column; min-height:0;
+.voice-layout {
+  display:flex; flex:1; min-height:0;
   background:var(--chat);
 }
+.voice-sidebar {
+  width:260px; flex-shrink:0; background:var(--sidebar);
+  display:flex; flex-direction:column; min-height:0;
+  border-right:1px solid var(--divider);
+}
+.voice-sidebar-header {
+  height:56px; flex-shrink:0; padding:0 16px;
+  display:flex; align-items:center; gap:10px;
+  box-shadow:0 1px 0 rgba(4,4,5,.2);
+}
+.voice-sidebar-header .vh-icon {
+  width:40px; height:40px; border-radius:10px;
+  background:rgba(35,165,90,.15); color:var(--success);
+  display:grid; place-items:center; font-size:20px;
+}
+.voice-sidebar-header .vh-title {
+  flex:1; min-width:0;
+}
+.voice-sidebar-header .vh-title .ch-name {
+  font-size:16px; font-weight:700; color:var(--text);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.voice-sidebar-header .vh-title .ch-topic {
+  font-size:12px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.voice-sidebar-header .vh-actions {
+  display:flex; gap:4px;
+}
+.voice-sidebar-header .vh-actions .vh-btn {
+  width:32px; height:32px; border-radius:6px;
+  display:grid; place-items:center;
+  color:var(--text2); font-size:16px;
+  transition:background 80ms;
+}
+.voice-sidebar-header .vh-actions .vh-btn:hover { background:var(--hover); color:var(--text); }
+.voice-sidebar-body {
+  flex:1; overflow-y:auto; padding:12px;
+}
+.voice-sidebar-body .vs-section {
+  margin-bottom:12px;
+}
+.voice-sidebar-body .vs-section-title {
+  font-size:11px; font-weight:700; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px;
+}
+.voice-sidebar-body .vs-members-list {
+  display:flex; flex-direction:column; gap:4px;
+}
+.voice-sidebar-body .vs-member {
+  display:flex; align-items:center; gap:10px;
+  padding:8px; border-radius:6px; cursor:pointer;
+  transition:background 80ms;
+}
+.voice-sidebar-body .vs-member:hover { background:var(--hover); }
+.voice-sidebar-body .vs-member.speaking { background:color-mix(in srgb,var(--success) 8%,var(--chat)); }
+.voice-sidebar-body .vs-member-av {
+  width:32px; height:32px; border-radius:50%;
+  display:grid; place-items:center; color:#fff;
+  font-size:12px; font-weight:700; flex-shrink:0;
+}
+.voice-sidebar-body .vs-member-av.speaking { box-shadow:0 0 0 2px var(--success); }
+.voice-sidebar-body .vs-member-info {
+  flex:1; min-width:0;
+}
+.voice-sidebar-body .vs-member-name {
+  font-size:14px; font-weight:600; color:var(--text);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.voice-sidebar-body .vs-member-status {
+  font-size:11px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.voice-sidebar-body .vs-member-actions {
+  display:flex; gap:4px; opacity:0; transition:opacity 150ms;
+}
+.voice-sidebar-body .vs-member:hover .vs-member-actions { opacity:1; }
+.voice-sidebar-body .vs-member-btn {
+  width:28px; height:28px; border-radius:6px;
+  background:var(--elevated); color:var(--text2);
+  display:grid; place-items:center; font-size:12px;
+  cursor:pointer; transition:all 100ms;
+}
+.voice-sidebar-body .vs-member-btn:hover { background:var(--hover); color:var(--text); }
+.voice-sidebar-body .vs-member-btn.kick:hover { background:var(--danger); color:#fff; }
+.voice-sidebar-footer {
+  height:52px; flex-shrink:0; padding:0 16px;
+  display:flex; align-items:center; gap:8px;
+  border-top:1px solid var(--divider);
+}
+.voice-main {
+  flex:1; min-width:0; background:var(--chat);
+  display:flex; flex-direction:column; min-height:0;
+}
+.voice-main-header {
+  height:56px; flex-shrink:0; padding:0 16px;
+  display:flex; align-items:center; gap:8px;
+  box-shadow:0 1px 0 rgba(4,4,5,.2);
+  z-index:2; position:relative;
+}
+.voice-main-header .vh-icon {
+  width:36px; height:36px; border-radius:10px;
+  background:rgba(35,165,90,.15); color:var(--success);
+  display:grid; place-items:center; font-size:18px;
+}
+.voice-main-header .vh-title {
+  font-size:16px; font-weight:700; color:var(--text);
+}
+.voice-main-header .vh-actions {
+  margin-left:auto; display:flex; gap:4px;
+}
+.voice-main-body {
+  flex:1; overflow-y:auto; padding:20px;
+  display:flex; flex-direction:column; gap:16px;
+}
+.voice-main-body .vs-quality {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 12px; border-radius:8px;
+  background:var(--sidebar); border:1px solid var(--divider);
+}
+.voice-main-body .vs-quality-label {
+  font-size:12px; font-weight:600; color:var(--text2);
+}
+.voice-main-body .vs-quality-value {
+  font-size:12px; font-weight:700;
+}
+.voice-main-body .vs-video-grid {
+  display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+  gap:12px;
+}
+.voice-main-body .vs-video-tile {
+  position:relative; aspect-ratio:16/9;
+  border-radius:10px; background:var(--rail);
+  overflow:hidden;
+}
+.voice-main-body .vs-video-tile video {
+  display:block; width:100%; height:100%; object-fit:cover;
+}
+.voice-main-body .vs-video-tile .vs-video-label {
+  position:absolute; bottom:8px; left:8px; right:8px;
+  padding:4px 8px; border-radius:4px;
+  background:rgba(0,0,0,.6); color:#fff; font-size:11px;
+}
+.voice-main-body .vs-video-tile.speaking {
+  box-shadow:0 0 0 2px var(--success);
+}
+.voice-main-body .vs-video-tile .vs-speak-indicator {
+  position:absolute; top:8px; right:8px;
+  width:10px; height:10px; border-radius:50%;
+  background:var(--success); box-shadow:0 0 8px var(--success);
+}
+.voice-main-body .vs-empty {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; color:var(--text2);
+}
+.voice-main-body .vs-empty .vs-empty-icon {
+  font-size:64px; margin-bottom:16px; opacity:.3;
+}
+.voice-main-footer {
+  height:72px; flex-shrink:0; padding:0 20px;
+  display:flex; align-items:center; gap:12px;
+  border-top:1px solid var(--divider);
+  background:var(--chat-alt);
+}
+.voice-main-footer .vc-btn {
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  padding:8px 14px; border-radius:8px;
+  font-size:11px; font-weight:600;
+  color:var(--text2); transition:all 120ms;
+}
+.voice-main-footer .vc-btn:hover { background:var(--hover); color:var(--text); }
+.voice-main-footer .vc-btn .vc-i {
+  width:34px; height:34px; border-radius:8px;
+  background:var(--rail); display:grid; place-items:center;
+  font-size:18px; margin-bottom:4px; transition:all 120ms;
+}
+.voice-main-footer .vc-btn:hover .vc-i { background:var(--accent); color:#fff; }
+.voice-main-footer .vc-btn.active { background:rgba(88,101,242,.15); color:var(--accent); }
+.voice-main-footer .vc-btn.active .vc-i { background:var(--accent); color:#fff; }
+.voice-main-footer .vc-btn.danger { color:var(--danger); }
+.voice-main-footer .vc-btn.danger .vc-i { background:rgba(218,55,60,.15); color:var(--danger); }
+.voice-main-footer .vc-btn.danger:hover .vc-i { background:var(--danger); color:#fff; }
 .voice-head {
   padding:16px 20px 12px;
   display:flex; align-items:center; gap:12px;
@@ -1276,113 +1456,7 @@ a:hover { text-decoration:underline; }
   .lk-member-grid { grid-template-columns:1fr; }
 }
 
-.voice-grid {
-  flex:1; overflow-y:auto;
-  padding:8px 20px 16px;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
-  gap:12px; align-content:start;
-}
-.voice-tile {
-  position:relative; aspect-ratio:1/1;
-  border-radius:12px; background:var(--sidebar);
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  gap:12px; padding:16px;
-  transition:all 160ms; overflow:hidden;
-}
-.voice-tile:hover { background:var(--chat-alt); }
-.voice-tile.speaking {
-  box-shadow:0 0 0 2px var(--success), 0 0 20px rgba(35,165,90,.2);
-}
-.voice-tile.muted { opacity:.65; }
-.voice-tile .vt-av {
-  width:88px; height:88px; border-radius:50%;
-  display:grid; place-items:center;
-  font-size:32px; font-weight:700; color:#fff;
-  transition:transform 160ms;
-}
-.voice-tile.speaking .vt-av { transform:scale(1.05); }
-.voice-tile .vt-name {
-  font-size:15px; font-weight:600; text-align:center;
-}
-.voice-tile .vt-tag {
-  position:absolute; top:8px; left:8px;
-  display:flex; gap:4px;
-}
-.voice-tile .tag {
-  padding:3px 8px; border-radius:999px;
-  font-size:10px; font-weight:700;
-  text-transform:uppercase; letter-spacing:.04em; color:#fff;
-}
-.voice-tile .tag.live { background:var(--danger); }
-.voice-tile .tag.share { background:var(--accent); }
-.voice-tile .vt-mute {
-  position:absolute; bottom:12px; right:12px;
-  width:28px; height:28px; border-radius:50%;
-  background:var(--danger); color:#fff;
-  display:grid; place-items:center; font-size:14px;
-}
-.voice-tile .vt-quality {
-  margin-top:4px; font-size:10px; font-weight:600;
-  white-space:nowrap;
-}
-.voice-tile .vt-actions {
-  position:absolute; top:8px; right:8px;
-  display:flex; gap:4px; opacity:0; transition:opacity 150ms;
-}
-.voice-tile:hover .vt-actions { opacity:1; }
-.voice-tile .vt-btn {
-  width:26px; height:26px; border-radius:6px;
-  background:var(--elevated); color:var(--text);
-  display:grid; place-items:center; font-size:12px;
-  cursor:pointer; transition:all 100ms;
-}
-.voice-tile .vt-btn:hover { background:var(--hover); color:var(--text); }
-.voice-tile .vt-btn.vt-btn-kick:hover { background:var(--danger); color:#fff; }
-.voice-tile .speak-bars {
-  position:absolute; bottom:14px; left:50%;
-  transform:translateX(-50%);
-  display:flex; gap:3px; align-items:flex-end;
-  height:18px;
-}
-.voice-tile .speak-bars span {
-  width:3px; background:var(--success);
-  border-radius:2px; animation:speakBar .7s infinite;
-}
-.voice-tile .speak-bars span:nth-child(1) { height:8px; animation-delay:0s; }
-.voice-tile .speak-bars span:nth-child(2) { height:14px; animation-delay:.15s; }
-.voice-tile .speak-bars span:nth-child(3) { height:10px; animation-delay:.3s; }
-.voice-tile .speak-bars span:nth-child(4) { height:16px; animation-delay:.45s; }
-@keyframes speakBar { 0%,100%{transform:scaleY(.4);} 50%{transform:scaleY(1);} }
-
-.voice-controls {
-  padding:12px 20px 20px;
-  display:flex; gap:8px; justify-content:center;
-  flex-wrap:wrap; flex-shrink:0;
-}
-.vc-btn {
-  display:flex; flex-direction:column;
-  align-items:center; gap:4px;
-  padding:10px 16px; min-width:88px;
-  background:var(--sidebar); border-radius:8px;
-  font-size:11px; font-weight:600;
-  color:var(--text2); transition:all 120ms;
-  position:relative;
-}
-.vc-btn .vc-i {
-  width:32px; height:32px; border-radius:50%;
-  background:var(--rail); display:grid; place-items:center;
-  font-size:16px; transition:all 120ms;
-}
-.vc-btn:hover { background:var(--chat-alt); color:var(--text); }
-.vc-btn:hover .vc-i { background:var(--accent); color:#fff; }
-.vc-btn.active { background:rgba(88,101,242,.15); color:var(--accent); }
-.vc-btn.active .vc-i { background:var(--accent); color:#fff; }
-.vc-btn.danger { color:var(--danger); }
-.vc-btn.danger .vc-i { background:rgba(218,55,60,.15); color:var(--danger); }
-.vc-btn.danger:hover .vc-i { background:var(--danger); color:#fff; }
-.vc-btn .vc-pro {
+.voice-main-footer .vc-btn .vc-pro {
   position:absolute; top:-6px; right:-4px;
   padding:1px 6px; border-radius:4px;
   background:var(--pro); color:#fff;
@@ -2346,7 +2420,7 @@ const STATE = {
   quickSwitcherIndex: 0,
 };
 let LAUNCH_AT_LOGIN = { supported: false, enabled: false, busy: false };
-let APP_VERSION = '1.4.46';
+let APP_VERSION = '1.4.47';
 
 /* Локальный профиль клиента переживает перезапуск и не требует панели. */
 const AURORA_LOCAL_PROFILE_KEY = 'aurora_game_profile_v1';
@@ -3286,22 +3360,82 @@ function renderVoiceChannel(ch) {
   if (ch.communityVoice) {
     const dur = formatTime(STATE.callTimer || 0);
     return `
-      <div class="voice-screen">
-        <div class="voice-head">
-          <div class="vh-icon">🔊</div>
-          <div>
-            <h2>${escapeHtml(ch.name)}</h2>
-            <div class="vsub">Голосовой канал игрового сообщества</div>
+      <div class="voice-layout">
+        <div class="voice-sidebar">
+          <div class="voice-sidebar-header">
+            <div class="vh-icon">🔊</div>
+            <div class="vh-title">
+              <div class="ch-name">${escapeHtml(ch.name)}</div>
+              <div class="ch-topic">Голосовой канал игрового сообщества</div>
+            </div>
+            <div class="vh-actions">
+              <button class="vh-btn" onclick="voiceInvite()" title="Пригласить">👥</button>
+              <button class="vh-btn" onclick="voiceDevices()" title="Устройства">🎛️</button>
+            </div>
           </div>
-          <div class="voice-duration">${dur}</div>
+          <div class="voice-sidebar-body">
+            <div class="vs-section">
+              <div class="vs-section-title">КТО В КОНАТЕ</div>
+              <div class="vs-members-list">
+                <div class="vs-member vs-member-empty">
+                  <div class="vs-member-av">—</div>
+                  <div class="vs-member-info">
+                    <div class="vs-member-name">Никто не в канале</div>
+                    <div class="vs-member-status">—</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="voice-sidebar-footer">
+            <button class="btn btn-ghost" onclick="leaveVoice()" style="width:100%;padding:6px 12px;">
+              <span>📞</span> Выйти
+            </button>
+          </div>
         </div>
-        <div id="lkBox"></div>
-        <div class="voice-actions">
-          <button class="btn btn-ghost btn-sm" onclick="voiceInvite()">
-            <span>👥</span> Пригласить
+        <div class="voice-main">
+          <div class="voice-main-header">
+            <div class="vh-icon">🔊</div>
+            <div class="vh-title">${escapeHtml(ch.name)}</div>
+            <div class="vh-actions">
+              <button class="vh-btn" onclick="voiceInvite()" title="Пригласить">👥</button>
+              <button class="vh-btn" onclick="voiceDevices()" title="Устройства">🎛️</button>
+            </div>
+          </div>
+          <div class="voice-main-body">
+            <div class="vs-quality">
+              <span class="vs-quality-label">Качество связи</span>
+              <span class="vs-quality-value" id="vs-quality-value">—</span>
+            </div>
+            <div class="vs-video-grid" id="vs-video-grid">
+              <div class="vs-empty">
+                <div class="vs-empty-icon">📹</div>
+                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">Видео и экран</div>
+                <div style="font-size:13px; color:var(--text2);">Здесь появятся камеры и трансляции участников</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="voice-main-footer">
+          <button class="vc-btn" onclick="toggleMute()" title="Микрофон">
+            <span class="vc-i">${STATE.muted ? '🔇' : '🎤'}</span>
+            <span>${STATE.muted ? 'Микрофон выкл' : 'Микрофон'}</span>
           </button>
-          <button class="btn btn-primary btn-sm" onclick="voiceDevices()">
-            <span>🎛️</span> Устройства
+          <button class="vc-btn" onclick="toggleDeafen()" title="Звук">
+            <span class="vc-i">${STATE.deafened ? '🔇' : '🎧'}</span>
+            <span>${STATE.deafened ? 'Звук выкл' : 'Звук'}</span>
+          </button>
+          <button class="vc-btn" onclick="toggleCamera()" title="Камера">
+            <span class="vc-i">📷</span>
+            <span>Камера</span>
+          </button>
+          <button class="vc-btn" onclick="toggleScreen()" title="Экран">
+            <span class="vc-i">🖥</span>
+            <span>Экран</span>
+          </button>
+          <button class="vc-btn danger" onclick="leaveVoice()" title="Выйти">
+            <span class="vc-i">📞</span>
+            <span>Выйти</span>
           </button>
         </div>
       </div>`;
@@ -3315,66 +3449,92 @@ function renderVoiceChannel(ch) {
   const qualityLabel = quality === 'good' ? 'Отличное' : quality === 'medium' ? 'Среднее' : 'Плохое';
   const qualityColor = quality === 'good' ? 'var(--success)' : quality === 'medium' ? 'var(--warn)' : 'var(--danger)';
   return `
-    <div class="voice-screen">
-      <div class="voice-head">
-        <div class="vh-icon">🔊</div>
-        <div>
-          <h2>${ch.name}</h2>
-          <div class="vsub">${count} участников · ${media && media.connected ? 'голос подключён' : 'голос не подключён'}</div>
+    <div class="voice-layout">
+      <div class="voice-sidebar">
+        <div class="voice-sidebar-header">
+          <div class="vh-icon">🔊</div>
+          <div class="vh-title">
+            <div class="ch-name">${ch.name}</div>
+            <div class="ch-topic">${count} участников · ${media && media.connected ? 'голос подключён' : 'голос не подключён'}</div>
+          </div>
+          <div class="vh-actions">
+            <button class="vh-btn" onclick="voiceInvite()" title="Пригласить">👥</button>
+            <button class="vh-btn" onclick="voiceDevices()" title="Устройства">🎛️</button>
+          </div>
         </div>
-        <div class="voice-duration">${formatTime(STATE.callTimer || 0)}</div>
-        <div class="vstatus"><span class="dot"></span>${rtt !== null ? rtt + ' мс' : 'нет данных'}</div>
-      </div>
-      <div class="voice-grid">
-        ${participants.map(p => `
-          <div class="voice-tile ${p.speaking ? 'speaking' : ''} ${p.muted ? 'muted' : ''}"
-               oncontextmenu="openUserCtx(event, ${inlineJsArg(p.id)})">
-            ${p.tag ? `<div class="vt-tag"><span class="tag ${p.tag.type}">${p.tag.text}</span></div>` : ''}
-            <div class="vt-av" style="background:${p.color};">${profileAvatarMarkup(p)}</div>
-            <div class="vt-name">${escapeHtml(p.name)}${p.id === STATE.user.id ? ' (ты)' : ''}</div>
-            <div class="vt-quality" style="color:${qualityColor}; font-size:11px;">${qualityLabel}</div>
-            ${p.speaking ? '<div class="speak-bars"><span></span><span></span><span></span><span></span></div>' : ''}
-            ${p.muted ? '<div class="vt-mute">🔇</div>' : ''}
-            <div class="vt-actions">
-              <button class="vt-btn" data-mute-id="${escapeAttr(p.id)}" title="${p.muted ? 'Разрешить микрофон' : 'Заглушить'}">${p.muted ? '🔊' : '🔇'}</button>
-              <button class="vt-btn vt-btn-kick" data-kick-id="${escapeAttr(p.id)}" title="Удалить из канала">✕</button>
+        <div class="voice-sidebar-body">
+          <div class="vs-section">
+            <div class="vs-section-title">КТО В КОНАТЕ</div>
+            <div class="vs-members-list">
+              ${participants.map(p => `
+                <div class="vs-member ${p.speaking ? 'speaking' : ''} ${p.muted ? 'muted' : ''}"
+                     oncontextmenu="openUserCtx(event, ${inlineJsArg(p.id)})">
+                  <div class="vs-member-av" style="background:${p.color}">${profileAvatarMarkup(p)}</div>
+                  <div class="vs-member-info">
+                    <div class="vs-member-name">${escapeHtml(p.name)}${p.id === STATE.user.id ? ' (ты)' : ''}</div>
+                    <div class="vs-member-status">${p.muted ? 'Микрофон выкл' : p.speaking ? 'Говорит' : 'В канале'}</div>
+                  </div>
+                  <div class="vs-member-actions">
+                    <button class="vs-member-btn" data-mute-id="${escapeAttr(p.id)}" title="${p.muted ? 'Разрешить микрофон' : 'Заглушить'}">${p.muted ? '🔊' : '🔇'}</button>
+                    <button class="vs-member-btn vs-member-btn-kick" data-kick-id="${escapeAttr(p.id)}" title="Удалить из канала">✕</button>
+                  </div>
+                </div>
+              `).join('')}
             </div>
           </div>
-        `).join('')}
+        </div>
+        <div class="voice-sidebar-footer">
+          <button class="btn btn-ghost" onclick="leaveVoice()" style="width:100%;padding:6px 12px;">
+            <span>📞</span> Выйти
+          </button>
+        </div>
       </div>
-      <div class="voice-actions">
-        <button class="btn btn-ghost btn-sm" onclick="voiceInvite()">
-          <span>👥</span> Пригласить
-        </button>
-        <button class="btn btn-primary btn-sm" onclick="voiceDevices()">
-          <span>🎛️</span> Устройства
-        </button>
+      <div class="voice-main">
+        <div class="voice-main-header">
+          <div class="vh-icon">🔊</div>
+          <div class="vh-title">${ch.name}</div>
+          <div class="vh-actions">
+            <button class="vh-btn" onclick="voiceInvite()" title="Пригласить">👥</button>
+            <button class="vh-btn" onclick="voiceDevices()" title="Устройства">🎛️</button>
+          </div>
+        </div>
+        <div class="voice-main-body">
+          <div class="vs-quality">
+            <span class="vs-quality-label">Качество связи</span>
+            <span class="vs-quality-value" id="vs-quality-value" style="color:${qualityColor}">${rtt !== null ? rtt + ' мс' : '—'}</span>
+          </div>
+          <div class="vs-video-grid" id="vs-video-grid">
+            ${STATE.callTimer > 0 ? `
+              <div class="vs-video-tile">
+                <div class="vs-video-label">${escapeHtml(STATE.user.name || 'Вы')}</div>
+                <video id="vs-self-video" autoplay muted playsinline></video>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+        <div class="voice-main-footer">
+          <button class="vc-btn ${STATE.muted ? 'active' : ''}" onclick="toggleMute()" title="Микрофон">
+            <span class="vc-i">${STATE.muted ? '🔇' : '🎤'}</span>
+            <span>${STATE.muted ? 'Микрофон выкл' : 'Микрофон'}</span>
+          </button>
+          <button class="vc-btn ${STATE.deafened ? 'active' : ''}" onclick="toggleDeafen()" title="Звук">
+            <span class="vc-i">${STATE.deafened ? '🔇' : '🎧'}</span>
+            <span>${STATE.deafened ? 'Звук выкл' : 'Звук'}</span>
+          </button>
+          <button class="vc-btn" onclick="toggleCamera()" title="Камера">
+            <span class="vc-i">📷</span>
+            <span>Камера</span>
+          </button>
+          <button class="vc-btn" onclick="toggleScreen()" title="Экран">
+            <span class="vc-i">🖥</span>
+            <span>Экран</span>
+          </button>
+          <button class="vc-btn danger" onclick="leaveVoice()" title="Выйти">
+            <span class="vc-i">📞</span>
+            <span>Выйти</span>
+          </button>
+        </div>
       </div>
-      <div class="voice-controls">
-        <button class="vc-btn ${STATE.muted ? 'active' : ''}" onclick="toggleMute()">
-          <span class="vc-i">🎤</span> Микрофон
-        </button>
-        <button class="vc-btn ${STATE.deafened ? 'active' : ''}" onclick="toggleDeafen()">
-          <span class="vc-i">🎧</span> Звук
-        </button>
-        <button class="vc-btn" onclick="toast('📷 Камера — PRO')">
-          <span class="vc-i">📷</span> Камера
-        </button>
-        <button class="vc-btn" onclick="openModal('shareModal')">
-          <span class="vc-i">🖥</span> Показать экран
-          <span class="vc-pro">PRO</span>
-        </button>
-        <button class="vc-btn" onclick="toast('🎮 Активности — скоро')">
-          <span class="vc-i">🎮</span> Активности
-        </button>
-        <button class="vc-btn" onclick="toggleSoundboard(event, true)">
-          <span class="vc-i">🔊</span> Звуки
-        </button>
-        <button class="vc-btn danger" onclick="leaveVoice()">
-          <span class="vc-i">📞</span> Выйти
-        </button>
-      </div>
-    </div>
   `;
 }
 
