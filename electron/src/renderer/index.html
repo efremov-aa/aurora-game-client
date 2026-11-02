@@ -1179,6 +1179,7 @@ a:hover { text-decoration:underline; }
   padding:16px 20px 12px;
   display:flex; align-items:center; gap:12px;
   flex-shrink:0;
+  border-bottom:1px solid var(--divider);
 }
 .vh-icon {
   width:40px; height:40px; border-radius:12px;
@@ -1239,29 +1240,36 @@ a:hover { text-decoration:underline; }
 .lk-members { margin-top:14px; padding:16px; background:var(--sidebar); border:1px solid var(--divider); border-radius:10px; }
 .lk-section-title { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; color:var(--text2); font-size:11px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
 .lk-count { padding:3px 8px; border-radius:999px; background:var(--elevated); color:var(--text2); font-size:11px; letter-spacing:0; }
-.lk-member-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:10px; }
+.lk-member-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
 .lk-member {
   display:flex; align-items:center; gap:12px; min-width:0; padding:12px;
-  border:1px solid var(--divider); border-radius:9px; background:var(--chat);
+  border:1px solid var(--divider); border-radius:10px; background:var(--chat);
   transition:border-color 140ms ease,background 140ms ease,box-shadow 140ms ease;
 }
-.lk-member.speaking { border-color:var(--success); background:color-mix(in srgb,var(--success) 9%,var(--chat)); box-shadow:0 0 0 1px color-mix(in srgb,var(--success) 45%,transparent),0 0 18px color-mix(in srgb,var(--success) 22%,transparent); }
-.lk-avatar { position:relative; display:grid; place-items:center; flex:0 0 46px; width:46px; height:46px; border:2px solid var(--divider); border-radius:50%; background:var(--lk-user-color,#5865f2); color:#fff; font-size:17px; font-weight:700; transition:box-shadow 140ms ease,border-color 140ms ease; }
-.lk-member.speaking .lk-avatar { border-color:var(--success); box-shadow:0 0 0 3px color-mix(in srgb,var(--success) 28%,transparent); }
+.lk-member:hover { background:var(--chat-alt); }
+.lk-member.speaking { border-color:var(--success); background:color-mix(in srgb,var(--success) 10%,var(--chat)); box-shadow:0 0 0 2px color-mix(in srgb,var(--success) 40%,transparent); }
+.lk-avatar { position:relative; display:grid; place-items:center; flex:0 0 52px; width:52px; height:52px; border:2px solid var(--divider); border-radius:50%; background:var(--lk-user-color,#5865f2); color:#fff; font-size:19px; font-weight:700; transition:box-shadow 140ms ease,border-color 140ms ease; }
+.lk-avatar.speaking, .lk-member.speaking .lk-avatar { border-color:var(--success); box-shadow:0 0 0 3px color-mix(in srgb,var(--success) 30%,transparent); }
 .lk-member-info { flex:1; min-width:0; }
 .lk-member-name { overflow:hidden; color:var(--text); font-size:14px; font-weight:650; text-overflow:ellipsis; white-space:nowrap; }
 .lk-member-state { margin-top:3px; color:var(--text2); font-size:11px; }
-.lk-member-tools { display:flex; align-items:center; gap:5px; color:var(--muted); }
-.lk-member-tool { width:23px; height:23px; display:grid; place-items:center; border-radius:5px; background:var(--elevated); font-size:12px; }
+.lk-member-tools { display:flex; align-items:center; gap:6px; color:var(--muted); }
+.lk-member-tool { width:30px; height:30px; display:grid; place-items:center; border-radius:6px; background:var(--elevated); font-size:13px; cursor:pointer; transition:all 100ms; }
+.lk-member-tool:hover { background:var(--hover); color:var(--text); }
+.lk-member-tool.voice { background:var(--rail); }
 .lk-member.speaking .lk-member-tool.voice { background:var(--success); color:#fff; }
+.lk-member-tool.mute { color:var(--danger); }
+.lk-member-tool.kick { color:var(--danger); }
 .user-panel .up-av.voice-speaking { outline:3px solid var(--success); outline-offset:2px; box-shadow:0 0 0 5px color-mix(in srgb,var(--success) 25%,transparent),0 0 18px color-mix(in srgb,var(--success) 50%,transparent) !important; }
 .user-panel .up-av.voice-speaking::before { content:'♪'; position:absolute; z-index:3; left:-5px; bottom:-4px; width:16px; height:16px; display:grid; place-items:center; border:2px solid var(--chat-alt); border-radius:50%; background:var(--success); color:#fff; font-size:10px; font-weight:800; line-height:1; }
-.lk-empty { padding:18px 12px; text-align:center; color:var(--text2); font-size:13px; }
+.lk-empty { padding:24px; text-align:center; color:var(--text2); font-size:13px; }
 .lk-stage { margin-top:14px; padding:16px; background:var(--sidebar); border:1px solid var(--divider); border-radius:10px; }
 .lk-video-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
-.lk-video-tile { min-width:0; overflow:hidden; border:1px solid var(--divider); border-radius:9px; background:var(--rail); }
+.lk-video-tile { min-width:0; overflow:hidden; border:1px solid var(--divider); border-radius:10px; background:var(--rail); }
 .lk-video-label { padding:8px 10px; color:var(--text2); font-size:12px; }
 .lk-video-tile video { display:block; width:100%; max-height:420px; aspect-ratio:16/9; background:#090a0d; object-fit:contain; }
+.lk-video-tile.speaking { box-shadow:0 0 0 2px var(--success); }
+.lk-video-tile .video-speak-indicator { position:absolute; top:8px; right:8px; width:10px; height:10px; border-radius:50%; background:var(--success); box-shadow:0 0 8px var(--success); }
 @media (max-width:640px) {
   .lk-voice { padding:4px 10px 16px; }
   .lk-toolbar { align-items:flex-start; flex-direction:column; }
@@ -1315,6 +1323,23 @@ a:hover { text-decoration:underline; }
   background:var(--danger); color:#fff;
   display:grid; place-items:center; font-size:14px;
 }
+.voice-tile .vt-quality {
+  margin-top:4px; font-size:10px; font-weight:600;
+  white-space:nowrap;
+}
+.voice-tile .vt-actions {
+  position:absolute; top:8px; right:8px;
+  display:flex; gap:4px; opacity:0; transition:opacity 150ms;
+}
+.voice-tile:hover .vt-actions { opacity:1; }
+.voice-tile .vt-btn {
+  width:26px; height:26px; border-radius:6px;
+  background:var(--elevated); color:var(--text);
+  display:grid; place-items:center; font-size:12px;
+  cursor:pointer; transition:all 100ms;
+}
+.voice-tile .vt-btn:hover { background:var(--hover); color:var(--text); }
+.voice-tile .vt-btn.vt-btn-kick:hover { background:var(--danger); color:#fff; }
 .voice-tile .speak-bars {
   position:absolute; bottom:14px; left:50%;
   transform:translateX(-50%);
@@ -2321,7 +2346,7 @@ const STATE = {
   quickSwitcherIndex: 0,
 };
 let LAUNCH_AT_LOGIN = { supported: false, enabled: false, busy: false };
-let APP_VERSION = '1.4.45';
+let APP_VERSION = '1.4.46';
 
 /* Локальный профиль клиента переживает перезапуск и не требует панели. */
 const AURORA_LOCAL_PROFILE_KEY = 'aurora_game_profile_v1';
@@ -3282,10 +3307,13 @@ function renderVoiceChannel(ch) {
       </div>`;
   }
   /* Участники и качество связи показываются только из медиасостояния узла. */
-  const participants = [{ ...DATA.users.me, speaking: false, muted: STATE.muted, tag: null }];
+  const participants = [{ ...DATA.users.me, speaking: false, muted: STATE.muted, tag: null, quality: 'good' }];
   const media = window.AURORA_STATE && window.AURORA_STATE.media;
   const count = media && Array.isArray(media.participants) ? media.participants.length : 0;
-  const rtt = media && Number.isFinite(Number(media.rtt_ms)) ? Number(media.rtt_ms) + ' мс' : 'нет данных';
+  const rtt = media && Number.isFinite(Number(media.rtt_ms)) ? Number(media.rtt_ms) : null;
+  const quality = rtt !== null ? (rtt < 100 ? 'good' : rtt < 250 ? 'medium' : 'bad') : 'unknown';
+  const qualityLabel = quality === 'good' ? 'Отличное' : quality === 'medium' ? 'Среднее' : 'Плохое';
+  const qualityColor = quality === 'good' ? 'var(--success)' : quality === 'medium' ? 'var(--warn)' : 'var(--danger)';
   return `
     <div class="voice-screen">
       <div class="voice-head">
@@ -3295,7 +3323,7 @@ function renderVoiceChannel(ch) {
           <div class="vsub">${count} участников · ${media && media.connected ? 'голос подключён' : 'голос не подключён'}</div>
         </div>
         <div class="voice-duration">${formatTime(STATE.callTimer || 0)}</div>
-        <div class="vstatus"><span class="dot"></span>${rtt}</div>
+        <div class="vstatus"><span class="dot"></span>${rtt !== null ? rtt + ' мс' : 'нет данных'}</div>
       </div>
       <div class="voice-grid">
         ${participants.map(p => `
@@ -3304,8 +3332,13 @@ function renderVoiceChannel(ch) {
             ${p.tag ? `<div class="vt-tag"><span class="tag ${p.tag.type}">${p.tag.text}</span></div>` : ''}
             <div class="vt-av" style="background:${p.color};">${profileAvatarMarkup(p)}</div>
             <div class="vt-name">${escapeHtml(p.name)}${p.id === STATE.user.id ? ' (ты)' : ''}</div>
+            <div class="vt-quality" style="color:${qualityColor}; font-size:11px;">${qualityLabel}</div>
             ${p.speaking ? '<div class="speak-bars"><span></span><span></span><span></span><span></span></div>' : ''}
             ${p.muted ? '<div class="vt-mute">🔇</div>' : ''}
+            <div class="vt-actions">
+              <button class="vt-btn" data-mute-id="${escapeAttr(p.id)}" title="${p.muted ? 'Разрешить микрофон' : 'Заглушить'}">${p.muted ? '🔊' : '🔇'}</button>
+              <button class="vt-btn vt-btn-kick" data-kick-id="${escapeAttr(p.id)}" title="Удалить из канала">✕</button>
+            </div>
           </div>
         `).join('')}
       </div>
@@ -4280,6 +4313,25 @@ function leaveVoice() {
   });
   toast('📞 Вышел из голосового канала');
   switchChannel('general');
+}
+
+function escapeJs(s) {
+  return String(s == null ? '' : s).replace(/\\/g, '\\\\').replace(/'/g, '\\\'').replace(/\n/g, '\\n').replace(/"/g, '\\"');
+}
+
+function toggleUserMute(userId) {
+  const p = DATA.users[userId] || DATA.users['game-' + userId];
+  if (!p) return;
+  p.muted = !p.muted;
+  toast((p.muted ? '🔇 ' : '🔊 ') + escapeHtml(p.name) + ' — микрофон ' + (p.muted ? 'заглушён' : 'включён'), 'success');
+  renderMain();
+}
+function kickUser(userId) {
+  const p = DATA.users[userId] || DATA.users['game-' + userId];
+  if (!p) return;
+  if (!confirm('Удалить ' + escapeHtml(p.name) + ' из голосового канала?')) return;
+  toast('👢 ' + escapeHtml(p.name) + ' удалён из канала', 'success');
+  renderMain();
 }
 
 /* ---------- таймер звонка ---------- */
@@ -8602,6 +8654,15 @@ function init() {
     if (!e.target.closest('.server-ctx') && !e.target.closest('.channel-ctx') &&
         !e.target.closest('.msg-ctx') && !e.target.closest('.user-ctx')) {
       hideAllCtx();
+    }
+    // Voice channel mute/kick buttons
+    const muteBtn = e.target.closest('[data-mute-id]');
+    if (muteBtn) {
+      toggleUserMute(muteBtn.getAttribute('data-mute-id'));
+    }
+    const kickBtn = e.target.closest('[data-kick-id]');
+    if (kickBtn) {
+      kickUser(kickBtn.getAttribute('data-kick-id'));
     }
   });
 
