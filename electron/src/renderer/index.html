@@ -1185,8 +1185,8 @@ a:hover { text-decoration:underline; }
   background:rgba(35,165,90,.15); color:var(--success);
   display:grid; place-items:center; font-size:20px;
 }
-.voice-head h2 { font-size:20px; font-weight:700; }
-.voice-head .vsub { font-size:13px; color:var(--text2); margin-top:2px; }
+.voice-head h2 { font-size:20px; font-weight:700; margin:0; }
+.voice-head .vsub { font-size:13px; color:var(--text2); margin-top:2px; margin-bottom:0; }
 .vstatus {
   margin-left:auto;
   display:inline-flex; align-items:center; gap:6px;
@@ -1197,6 +1197,19 @@ a:hover { text-decoration:underline; }
 .vstatus .dot {
   width:8px; height:8px; border-radius:50%;
   background:var(--success); animation:pulse 2s infinite;
+}
+.voice-duration {
+  margin-left:auto;
+  font-size:14px; font-weight:700;
+  font-variant-numeric:tabular-nums;
+  color:var(--text);
+}
+.voice-actions {
+  margin-top:12px;
+  display:flex; gap:8px;
+}
+.voice-actions .btn-ghost {
+  display:flex; align-items:center; gap:6px;
 }
 .lk-voice { width:min(100%,980px); margin:0 auto; padding:4px 20px 24px; }
 .lk-toolbar {
@@ -2295,6 +2308,8 @@ const STATE = {
   threadLoading: false,
   threadError: '',
   threadPollTimer: null,
+  callTimer: 0,                   // секунды в текущем голосовом канале
+  callTimerId: null,
   customStatus: { emoji: '', text: '' },
   status: 'online',               // online | idle | dnd | invisible
   user: {
@@ -2306,7 +2321,7 @@ const STATE = {
   quickSwitcherIndex: 0,
 };
 let LAUNCH_AT_LOGIN = { supported: false, enabled: false, busy: false };
-let APP_VERSION = '1.4.44';
+let APP_VERSION = '1.4.45';
 
 /* Локальный профиль клиента переживает перезапуск и не требует панели. */
 const AURORA_LOCAL_PROFILE_KEY = 'aurora_game_profile_v1';
@@ -3244,13 +3259,26 @@ function renderReactions(reacts, messageId, community) {
 /* ---------- VOICE CHANNEL ---------- */
 function renderVoiceChannel(ch) {
   if (ch.communityVoice) {
+    const dur = formatTime(STATE.callTimer || 0);
     return `
       <div class="voice-screen">
         <div class="voice-head">
           <div class="vh-icon">🔊</div>
-          <div><h2>${escapeHtml(ch.name)}</h2><div class="vsub">Голосовой канал игрового сообщества</div></div>
+          <div>
+            <h2>${escapeHtml(ch.name)}</h2>
+            <div class="vsub">Голосовой канал игрового сообщества</div>
+          </div>
+          <div class="voice-duration">${dur}</div>
         </div>
         <div id="lkBox"></div>
+        <div class="voice-actions">
+          <button class="btn btn-ghost btn-sm" onclick="voiceInvite()">
+            <span>👥</span> Пригласить
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="voiceDevices()">
+            <span>🎛️</span> Устройства
+          </button>
+        </div>
       </div>`;
   }
   /* Участники и качество связи показываются только из медиасостояния узла. */
@@ -3266,6 +3294,7 @@ function renderVoiceChannel(ch) {
           <h2>${ch.name}</h2>
           <div class="vsub">${count} участников · ${media && media.connected ? 'голос подключён' : 'голос не подключён'}</div>
         </div>
+        <div class="voice-duration">${formatTime(STATE.callTimer || 0)}</div>
         <div class="vstatus"><span class="dot"></span>${rtt}</div>
       </div>
       <div class="voice-grid">
@@ -3279,6 +3308,14 @@ function renderVoiceChannel(ch) {
             ${p.muted ? '<div class="vt-mute">🔇</div>' : ''}
           </div>
         `).join('')}
+      </div>
+      <div class="voice-actions">
+        <button class="btn btn-ghost btn-sm" onclick="voiceInvite()">
+          <span>👥</span> Пригласить
+        </button>
+        <button class="btn btn-primary btn-sm" onclick="voiceDevices()">
+          <span>🎛️</span> Устройства
+        </button>
       </div>
       <div class="voice-controls">
         <button class="vc-btn ${STATE.muted ? 'active' : ''}" onclick="toggleMute()">
@@ -4167,6 +4204,7 @@ function switchServer(id) {
 }
 
 function switchChannel(id) {
+  stopCallTimer();
   const ch = DATA.channels[id];
   if (!ch) return;
   STATE.activeChannel = id;
@@ -4230,10 +4268,11 @@ function joinVoice(id) {
   });
   renderAll();
   toast('🔊 Подключено к голосовому каналу', 'success');
-  // Simulate someone joining
+  startCallTimer();
 }
 
 function leaveVoice() {
+  stopCallTimer();
   STATE.inVoice = false;
   STATE.voiceChannelId = null;
   DATA.categories.forEach(cat => {
@@ -4241,6 +4280,44 @@ function leaveVoice() {
   });
   toast('📞 Вышел из голосового канала');
   switchChannel('general');
+}
+
+/* ---------- таймер звонка ---------- */
+function formatTime(s) {
+  s = Math.max(0, Math.floor(s));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = s % 60;
+  return (h ? h + ':' : '') + String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+}
+function startCallTimer() {
+  stopCallTimer();
+  STATE.callTimer = 0;
+  STATE.callTimerId = setInterval(function () {
+    STATE.callTimer += 1;
+    const el = document.getElementById('callTimer');
+    if (el) el.textContent = formatTime(STATE.callTimer);
+    if (document.getElementById('voice-duration')) {
+      document.getElementById('voice-duration').textContent = formatTime(STATE.callTimer);
+    }
+  }, 1000);
+}
+function stopCallTimer() {
+  if (STATE.callTimerId) {
+    clearInterval(STATE.callTimerId);
+    STATE.callTimerId = null;
+  }
+}
+function voiceInvite() {
+  const ch = DATA.channels[STATE.voiceChannelId || STATE.activeChannel || ''];
+  const name = ch ? ch.name : 'Голосовой канал';
+  const link = window.location.origin + '/#voice/' + encodeURIComponent(ch ? ch.id : '');
+  try { navigator.clipboard.writeText(link); } catch (e) {}
+  toast('Ссылка на канал скопирована: ' + name, 'success');
+}
+function voiceDevices() {
+  openModal('settingsModal');
+  renderSettingsTab('voice');
 }
 
 function toggleMute() {
@@ -7339,6 +7416,7 @@ async function joinCommunityVoice(channelId) {
       return;
     }
     toast('Вы в голосовом канале «' + channel.name + '»', 'ok');
+    startCallTimer();
   } catch (e) {
     toast('Не удалось войти в голосовой канал: ' + String(e && e.message || e), 'bad');
   }
