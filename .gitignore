@@ -53,3 +53,8 @@ Thumbs.db
 diag.txt
 audit_stubs.txt
 stub_result.txt
+
+# Серверные деплой-скрипты и сборки (только локально, не в публичный репозиторий)
+deploy_livekit_master.sh
+installer/output/
+_private_aurora_game/
