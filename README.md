@@ -1,217 +1,228 @@
-# Aurora Game — свой Discord для игр без обходов
+# 🐾 Aurora Game — свой Discord для игр, без обходов
 
 **[English version below](#english-version)**
 
-Aurora Game — это игровой мессенджер в стиле Discord. Голос, чат, серверы, друзья, вложения — всё работает без необходимости в VPN и обходах блокировок.
+Мяу! Это Aurora Game — игровой мессенджер в стиле Discord, которого котик Аврора
+вылизывает каждый день. Голос, видео, чат, серверы, друзья и вложения живут в одном
+окне и работают без VPN и без «танцев с бубном» вокруг блокировок.
 
-## Возможности
+Текущая версия: **1.4.48** — котик наконец научился обновляться сам: проверил,
+скачал, перезапустился и снова мурчит.
+
+---
+
+## Что умеет котик
 
 ### 💬 Общение
 - **Текстовые каналы** на игровых серверах и в личных сообщениях (DM)
 - **Реакции** на сообщения (👍 ❤️ 😂 🔥 🎉 🐱 👀 😢)
 - **Редактирование и удаление** своих сообщений
-- **Треды** — ответы на конкретные сообщения с сохранением истории
-- **Личные сообщения** между любыми зарегистрированными игроками
+- **Треды** — ответы на конкретное сообщение с сохранением истории
 - **Вложения** — картинки, документы, текстовые файлы до 1 МБ
 
 ### 🎮 Серверы
-- Создавайте свои игровые серверы с именем, описанием и эмодзи
-- Присоединяйтесь к публичным серверам по приглашению
-- Категории и каналы (текстовые и голосовые)
-- Роли и права доступа (владелец, модератор, участник)
-- Приглашения со сроком действия и лимитом использований
+- Свои серверы с именем, описанием и эмодзи
+- Вход по приглашению — со сроком действия и лимитом использований
+- Категории, текстовые и голосовые каналы
+- Роли и права: владелец, модератор, участник
 - Блокировка и разбан участников
 
 ### 👥 Друзья
 - Поиск игроков по нику
-- Заявки в друзья, принятие и отклонение
+- Заявки в друзья: отправить, принять, отклонить
 - Список друзей с онлайн-статусом
-- Блокировка нежелательных пользователей
+- Блокировка нежелательных профилей
 
 ### 🔊 Голос и видео
-- Голосовые каналы через LiveKit SFU
+- Голосовые каналы через LiveKit SFU — котик слышит всех
 - Камера и демонстрация экрана
 - Индикатор говорящего в реальном времени
-- Переключение микрофона/камеры/экрана
+- **Таймер звонка** — сколько уже сидим в канале
+- **Качество связи** у каждого участника: зелёный котик — всё хорошо, красный — плохо
+- **Мьют и кик участника** прямо из карточки в канале
+- **Приглашение в звонок** и список устройств ввода/вывода
+- Карточки участников с аватарами, статусом и пульсацией, когда человек говорит
 
 ### 📺 Совместный просмотр
 - Очередь прямых ссылок на видео (MP4, WebM)
-- Синхронизация проигрывания через LiveKit data-канал
+- Синхронизация проигрывания через data-канал LiveKit
 
 ### 🎨 Оформление
 - Тёмная и светлая темы
-- Сезонные оформления (Хэллоуин, Новый год, весна, лето) — авто или вручную
-- Настраиваемый аватар, цвет и описание профиля
+- Сезонные оформления: Хэллоуин, Новый год, весна, лето — авто или вручную
+- Свой аватар, цвет и описание профиля
 - Сезонные баннеры профиля
 
 ### 🔒 Безопасность
 - Анонимная регистрация — только ник, без пароля и почты
-- Токен профиля хранится в зашифрованном хранилище Windows
-- Все запросы к игровому API через HTTPS с Bearer-токеном
-- iframe-защита, проверка Host/Origin/Sec-Fetch-Site
+- Токен профиля лежит в зашифрованном хранилище Windows
+- Запросы к игровому API идут по HTTPS с Bearer-токеном
+- Защита от iframe, проверка Host, Origin и Sec-Fetch-Site
 
-### 🔄 Автообновление
-- Проверка новых версий через GitHub Releases
-- Проверка SHA-256 загруженного архива
-- Скачивание обновления и перезапуск приложения
-
-### 🖥️ Системная интеграция (Windows)
-- Системный трей — крестик скрывает окно, не закрывает приложение
+### 🖥️ Интеграция с Windows
+- Системный трей: крестик прячет окно, а не выключает котика
 - Автозапуск вместе с Windows (свёрнутым в трей)
-- Портативная сборка — не требует установки
+- Портативная сборка — можно носить на флешке
+
+---
 
 ## Установка
 
-### Быстрый старт (без установки)
-1. Скачайте последний `AuroraGame-win32-x64.zip` из [Releases](https://github.com/efremov-aa/aurora-game-client/releases)
+### Вариант 1 — установщик (рекомендует котик)
+
+1. Скачайте `AuroraGame-Setup-1.4.48.exe` из [Releases](https://github.com/efremov-aa/aurora-game-client/releases)
+2. Запустите — установщик спросит права администратора
+3. Выберите папку (по умолчанию `Program Files\Aurora Game`)
+4. Поставьте галочку «Создать ярлык на рабочем столе», если хочется
+5. Запустите `Aurora Game` из меню «Пуск»
+
+Установщик собран на Inno Setup 7, интерфейс на русском и английском,
+размер около 123 МБ.
+
+### Вариант 2 — портативная сборка
+
+1. Скачайте `AuroraGame-win32-x64.zip` из [Releases](https://github.com/efremov-aa/aurora-game-client/releases)
 2. Распакуйте в любую папку
 3. Запустите `AuroraGame.exe`
-4. Зарегистрируйте профиль на публичном игровом сервере
 
-### Установщик (в разработке)
-Используйте `installer/install.iss` для сборки через Inno Setup 7.
+Архив около 169 МБ, внутри Electron и медиасервер LiveKit — котик тащит всё с собой.
 
-## Начало работы
+---
+
+## Как котик обновляется сам
+
+Раньше обновление было наполовину ручным: скачай, распакуй, не забудь закрыть окно.
+В 1.4.48 котик довёл дело до конца.
+
+1. При старте приложение спрашивает GitHub Releases: «есть что-нибудь новее?»
+2. Если есть — показывает версию и заметки к релизу во вкладке **Настройки → 📦 Обновления**
+3. Нажимаете «Обновить» — клиент скачивает `AuroraGame-win32-x64.zip`
+4. Сверяет SHA-256 скачанного архива с тем, что отдал GitHub — битый файл не примут
+5. Распаковывает архив во временную папку рядом с профилем
+6. Запускает служебный скрипт: тот ждёт закрытия игры, копирует файлы поверх и **перезапускает Aurora Game**
+7. Убирает за собой архив и временные файлы
+
+Если GitHub недоступен, котик не падает и не ломает игру — просто сообщает,
+что проверить обновление не вышло, и работает дальше.
+
+---
+
+## Первый запуск
 
 1. Запустите `AuroraGame.exe`
-2. В окне регистрации придумайте ник (1–32 символа)
-3. Сохраните экспортированный ключ профиля — без него нельзя восстановить аккаунт
+2. Придумайте ник (1–32 символа)
+3. Сохраните экспортированный ключ профиля — без него аккаунт не восстановить
 4. Зайдите в «Игровое сообщество» → канал «общий»
 5. Добавьте друзей по нику, создайте свой сервер или зайдите в голосовой канал
 
+---
+
 ## Голос и видео для внешних пользователей
 
-Для голосовых звонков между разными сетями на медиасервере должен быть настроен LiveKit SFU с публичным WSS и UDP ICE. См. [`VOICE_SERVER.md`](VOICE_SERVER.md).
+Чтобы голос работал между разными сетями, на медиасервере должен быть поднят
+LiveKit SFU с публичным WSS и UDP ICE. Подробности — в [`VOICE_SERVER.md`](VOICE_SERVER.md).
 
-Клиентские ПК не требуют открытия портов — достаточно исходящего интернета. Клиент подключается к публичному медиасерверу автоматически, дополнительная настройка не требуется.
+Клиентам ничего пробрасывать не нужно: достаточно исходящего интернета.
+Клиент сам находит публичный медиасервер и подключается, настраивать вручную нечего.
+Секрет LiveKit в клиентскую сборку не попадает — токен подписывает сервер.
+
+---
 
 ## Технологии
 
 - **Electron 45.2.1** — оболочка приложения
 - **LiveKit 1.13.11** — голос, видео, демонстрация экрана
-- **Node.js** — локальный сервер интерфейса
+- **Node.js + SQLite** — серверная часть
 - **Inno Setup 7** — установщик Windows
-
-## Тестирование
-
-Все клиентские проверки:
-```bash
-cd electron
-npm test
-```
-
-Проходит 8 наборов тестов: курсоры сообщений, LiveKit lifecycle, безопасность окон, inline-хендлеры, локальный API, community session, DM state, community proxy, token store.
-
-## Лицензия
-
-Лицензия не указана — проект находится в активной разработке.
+- **GitHub Releases** — автообновление
 
 ---
 
-# Aurora Game — your own Discord for games without workarounds
+## Проверки
 
-## English
+Клиентские проверки:
 
-Aurora Game is a Discord-style gaming messenger. Voice, chat, servers, friends, attachments — everything works without needing VPN or blocks bypass.
-
-## Features
-
-### 💬 Communication
-- Text channels on game servers and in direct messages (DM)
-- Reactions on messages (👍 ❤️ 😂 🔥 🎉 🐱 👀 😢)
-- Edit and delete your own messages
-- Threads — replies to specific messages with history preservation
-- Direct messages between any registered players
-- Attachments — images, documents, text files up to 1 MB
-
-### 🎮 Servers
-- Create your own game servers with name, description, and emoji
-- Join public servers via invite
-- Categories and channels (text and voice)
-- Roles and permissions (owner, moderator, member)
-- Invites with expiration and use limits
-- Ban and unban members
-
-### 👥 Friends
-- Player search by nickname
-- Friend requests, accept and decline
-- Friends list with online status
-- Block unwanted users
-
-### 🔊 Voice and Video
-- Voice channels via LiveKit SFU
-- Camera and screen sharing
-- Speaking indicator in real time
-- Microphone/camera/screen toggling
-
-### 📺 Watch Together
-- Queue of direct video links (MP4, WebM)
-- Synchronized playback via LiveKit data channel
-
-### 🎨 Styling
-- Dark and light themes
-- Seasonal themes (Halloween, New Year, Spring, Summer) — automatic or manual
-- Customizable avatar, color, and profile bio
-- Seasonal profile banners
-
-### 🔒 Security
-- Anonymous registration — nickname only, no password or email
-- Profile token stored in encrypted Windows storage
-- All game API requests over HTTPS with Bearer token
-- iframe protection, Host/Origin/Sec-Fetch-Site validation
-
-### 🔄 Auto-Update
-- Check for new versions via GitHub Releases
-- SHA-256 verification of downloaded archive
-- Download update and restart application
-
-### 🖥️ System Integration (Windows)
-- System tray — close button hides window, doesn't quit app
-- Auto-launch with Windows (minimized to tray)
-- Portable build — no installation required
-
-## Quick Start
-
-1. Download latest `AuroraGame-win32-x64.zip` from [Releases](https://github.com/efremov-aa/aurora-game-client/releases)
-2. Extract to any folder
-3. Run `AuroraGame.exe`
-4. Register a profile on the public game server
-
-## Installer (in development)
-
-Use `installer/install.iss` to build via Inno Setup 7.
-
-## Getting Started
-
-1. Run `AuroraGame.exe`
-2. Create a nickname (1–32 characters)
-3. Save exported profile key — without it account cannot be recovered
-4. Join «Игровое сообщество» → channel «общий»
-5. Add friends by nickname, create your server or join a voice channel
-
-## Voice and Video for External Users
-
-For voice calls between different networks, the media server must have LiveKit SFU configured with public WSS and UDP ICE. See [`VOICE_SERVER.md`](VOICE_SERVER.md).
-
-Client PCs don't require port forwarding — just outgoing internet access. The client connects to the public media server automatically, no additional setup needed.
-
-## Technologies
-
-- **Electron 45.2.1** — application shell
-- **LiveKit 1.13.11** — voice, video, screen sharing
-- **Node.js** — local interface server
-- **Inno Setup 7** — Windows installer
-
-## Testing
-
-Client checks:
 ```bash
 cd electron
 npm test
 ```
 
-8 test suites pass: message cursors, LiveKit lifecycle, window security, inline handlers, local API, community session, DM state, community proxy, token store.
+Проходит 8 наборов тестов: курсоры сообщений, LiveKit lifecycle, безопасность окон,
+inline-хендлеры, локальный API, community session, DM state, community proxy,
+token store.
+
+Целостность портативного архива проверяется отдельно:
+
+```bash
+python tools/verify_portable.py electron/dist/AuroraGame-win32-x64.zip
+```
+
+Котик сверяет CRC всех файлов, обязательный состав и совпадение с исходниками.
+
+---
+
+## Лицензия
+
+Лицензия не указана — проект в активной разработке. Котик ещё думает.
+
+---
+
+# Aurora Game — your own Discord for games
+
+## English
+
+Meow! Aurora Game is a Discord-style gaming messenger: voice, video, chat, servers,
+friends and attachments in one window — no VPN, no workarounds.
+
+Current version: **1.4.48** — the cat finally learned to update itself.
+
+## Features
+
+- **Chat** — text channels, DMs, reactions, edits, threads, attachments up to 1 MB
+- **Servers** — categories, text and voice channels, roles, invites, bans
+- **Friends** — search, requests, online status, blocking
+- **Voice & Video** — LiveKit SFU, camera, screen share, speaking indicator,
+  call timer, per-participant connection quality, mute and kick from the member card,
+  invite to call, input/output device picker
+- **Watch Together** — up to 50 direct video links, playback synced via LiveKit data channel
+- **Looks** — dark and light themes, seasonal themes, custom avatar, color and bio
+- **Security** — nickname-only signup, profile token in encrypted Windows storage,
+  HTTPS + Bearer, iframe protection and Host/Origin/Sec-Fetch-Site checks
+- **Windows** — tray icon, autostart minimized, portable build
+
+## Install
+
+**Installer:** download `AuroraGame-Setup-1.4.48.exe` from
+[Releases](https://github.com/efremov-aa/aurora-game-client/releases), run it,
+pick a folder, launch from the Start menu.
+
+**Portable:** download `AuroraGame-win32-x64.zip`, extract anywhere,
+run `AuroraGame.exe`.
+
+## Auto-update
+
+On start the client asks GitHub Releases for a newer version. If there is one,
+it downloads `AuroraGame-win32-x64.zip`, verifies the SHA-256 digest, extracts it,
+and a small helper script waits for the app to close, copies the new files over
+and relaunches Aurora Game. If GitHub is unreachable the game keeps working and
+just reports that the check failed.
+
+## Tech
+
+- Electron 45.2.1
+- LiveKit 1.13.11 (voice, video, screen share)
+- Node.js + SQLite backend
+- Inno Setup 7 installer
+- GitHub Releases for updates
+
+## Tests
+
+```bash
+cd electron
+npm test
+python tools/verify_portable.py electron/dist/AuroraGame-win32-x64.zip
+```
 
 ## License
 
-No license specified — project is in active development.
+No license specified — the project is in active development.

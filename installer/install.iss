@@ -19,7 +19,7 @@ DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 LicenseFile=
-OutputDir=installer\output
+OutputDir=output
 OutputBaseFilename=AuroraGame-Setup-{#MyAppVersion}
 Compression=lzma
 SolidCompression=yes
@@ -36,9 +36,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "F:\AI_pro\прокси сервер\_github\aurora_game\electron\dist\AuroraGame-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
-; NOTE: Локальный LiveKit sidecar не включается — работает только на 127.0.0.1
-; и не нужен для публичного голоса. Публичный медиасервер на макрое.
+; Путь относительный: каталог сборки ищется рядом с installer\, без локальных абсолютных путей.
+Source: "..\electron\dist\AuroraGame-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+; В сборку входит sidecar LiveKit (resources\app\win\livekit\livekit-server.exe).
+; Он запускается только на 127.0.0.1 локально; для голоса между разными сетями
+; клиент автоматически подключается к публичному медиасерверу (см. VOICE_SERVER.md).
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
