@@ -1169,298 +1169,198 @@ a:hover { text-decoration:underline; }
 }
 
 /* ============================================================
-   VOICE CHANNEL VIEW
+   VOICE CHANNEL VIEW — как в Discord
+   Один компонент на оба экрана: голосовой канал и «Голос и видео».
+   Шапка (имя, статус, таймер, пинг, действия), сцена плиток
+   и нижний док с кнопками. Разметку собирает voiceShellMarkup().
    ============================================================ */
-.voice-layout {
-  display:flex; flex:1; min-height:0;
+.vc-page {
+  flex:1; min-height:0; display:flex;
   background:var(--chat);
 }
-.voice-sidebar {
-  width:260px; flex-shrink:0; background:var(--sidebar);
-  display:flex; flex-direction:column; min-height:0;
-  border-right:1px solid var(--divider);
+.vc-box {
+  flex:1; min-width:0; min-height:0;
+  display:flex; flex-direction:column;
+  background:var(--chat);
+  border-radius:14px; overflow:hidden;
 }
-.voice-sidebar-header {
-  height:56px; flex-shrink:0; padding:0 16px;
-  display:flex; align-items:center; gap:10px;
-  box-shadow:0 1px 0 rgba(4,4,5,.2);
+.vc-box.vc-embed {
+  flex:none; height:min(72vh,640px); min-height:460px;
+  border:1px solid var(--divider); margin-bottom:20px;
+  box-shadow:0 16px 36px rgba(0,0,0,.16);
 }
-.voice-sidebar-header .vh-icon {
-  width:40px; height:40px; border-radius:10px;
-  background:rgba(35,165,90,.15); color:var(--success);
-  display:grid; place-items:center; font-size:20px;
-}
-.voice-sidebar-header .vh-title {
-  flex:1; min-width:0;
-}
-.voice-sidebar-header .vh-title .ch-name {
-  font-size:16px; font-weight:700; color:var(--text);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.voice-sidebar-header .vh-title .ch-topic {
-  font-size:12px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.voice-sidebar-header .vh-actions {
-  display:flex; gap:4px;
-}
-.voice-sidebar-header .vh-actions .vh-btn {
-  width:32px; height:32px; border-radius:6px;
-  display:grid; place-items:center;
-  color:var(--text2); font-size:16px;
-  transition:background 80ms;
-}
-.voice-sidebar-header .vh-actions .vh-btn:hover { background:var(--hover); color:var(--text); }
-.voice-sidebar-body {
-  flex:1; overflow-y:auto; padding:12px;
-}
-.voice-sidebar-body .vs-section {
-  margin-bottom:12px;
-}
-.voice-sidebar-body .vs-section-title {
-  font-size:11px; font-weight:700; color:var(--muted);
-  text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px;
-}
-.voice-sidebar-body .vs-members-list {
-  display:flex; flex-direction:column; gap:4px;
-}
-.voice-sidebar-body .vs-member {
-  display:flex; align-items:center; gap:10px;
-  padding:8px; border-radius:6px; cursor:pointer;
-  transition:background 80ms;
-}
-.voice-sidebar-body .vs-member:hover { background:var(--hover); }
-.voice-sidebar-body .vs-member.speaking { background:color-mix(in srgb,var(--success) 8%,var(--chat)); }
-.voice-sidebar-body .vs-member-av {
-  width:32px; height:32px; border-radius:50%;
-  display:grid; place-items:center; color:#fff;
-  font-size:12px; font-weight:700; flex-shrink:0;
-}
-.voice-sidebar-body .vs-member-av.speaking { box-shadow:0 0 0 2px var(--success); }
-.voice-sidebar-body .vs-member-info {
-  flex:1; min-width:0;
-}
-.voice-sidebar-body .vs-member-name {
-  font-size:14px; font-weight:600; color:var(--text);
-  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.voice-sidebar-body .vs-member-status {
-  font-size:11px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-}
-.voice-sidebar-body .vs-member-actions {
-  display:flex; gap:4px; opacity:0; transition:opacity 150ms;
-}
-.voice-sidebar-body .vs-member:hover .vs-member-actions { opacity:1; }
-.voice-sidebar-body .vs-member-btn {
-  width:28px; height:28px; border-radius:6px;
-  background:var(--elevated); color:var(--text2);
-  display:grid; place-items:center; font-size:12px;
-  cursor:pointer; transition:all 100ms;
-}
-.voice-sidebar-body .vs-member-btn:hover { background:var(--hover); color:var(--text); }
-.voice-sidebar-body .vs-member-btn.kick:hover { background:var(--danger); color:#fff; }
-.voice-sidebar-footer {
-  height:52px; flex-shrink:0; padding:0 16px;
-  display:flex; align-items:center; gap:8px;
-  border-top:1px solid var(--divider);
-}
-.voice-main {
-  flex:1; min-width:0; background:var(--chat);
-  display:flex; flex-direction:column; min-height:0;
-}
-.voice-main-header {
-  height:56px; flex-shrink:0; padding:0 16px;
-  display:flex; align-items:center; gap:8px;
-  box-shadow:0 1px 0 rgba(4,4,5,.2);
-  z-index:2; position:relative;
-}
-.voice-main-header .vh-icon {
-  width:36px; height:36px; border-radius:10px;
-  background:rgba(35,165,90,.15); color:var(--success);
-  display:grid; place-items:center; font-size:18px;
-}
-.voice-main-header .vh-title {
-  font-size:16px; font-weight:700; color:var(--text);
-}
-.voice-main-header .vh-actions {
-  margin-left:auto; display:flex; gap:4px;
-}
-.voice-main-body {
-  flex:1; overflow-y:auto; padding:20px;
-  display:flex; flex-direction:column; gap:16px;
-}
-.voice-main-body .vs-quality {
-  display:flex; align-items:center; gap:8px;
-  padding:8px 12px; border-radius:8px;
-  background:var(--sidebar); border:1px solid var(--divider);
-}
-.voice-main-body .vs-quality-label {
-  font-size:12px; font-weight:600; color:var(--text2);
-}
-.voice-main-body .vs-quality-value {
-  font-size:12px; font-weight:700;
-}
-.voice-main-body .vs-video-grid {
-  display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-  gap:12px;
-}
-.voice-main-body .vs-video-tile {
-  position:relative; aspect-ratio:16/9;
-  border-radius:10px; background:var(--rail);
-  overflow:hidden;
-}
-.voice-main-body .vs-video-tile video {
-  display:block; width:100%; height:100%; object-fit:cover;
-}
-.voice-main-body .vs-video-tile .vs-video-label {
-  position:absolute; bottom:8px; left:8px; right:8px;
-  padding:4px 8px; border-radius:4px;
-  background:rgba(0,0,0,.6); color:#fff; font-size:11px;
-}
-.voice-main-body .vs-video-tile.speaking {
-  box-shadow:0 0 0 2px var(--success);
-}
-.voice-main-body .vs-video-tile .vs-speak-indicator {
-  position:absolute; top:8px; right:8px;
-  width:10px; height:10px; border-radius:50%;
-  background:var(--success); box-shadow:0 0 8px var(--success);
-}
-.voice-main-body .vs-empty {
-  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
-  text-align:center; color:var(--text2);
-}
-.voice-main-body .vs-empty .vs-empty-icon {
-  font-size:64px; margin-bottom:16px; opacity:.3;
-}
-.voice-main-footer {
-  height:72px; flex-shrink:0; padding:0 20px;
-  display:flex; align-items:center; gap:12px;
-  border-top:1px solid var(--divider);
+.vc-shell { flex:1; min-height:0; display:flex; flex-direction:column; }
+
+/* ---------- шапка ---------- */
+.vc-top {
+  flex-shrink:0; display:flex; align-items:center; gap:12px;
+  padding:14px 18px; border-bottom:1px solid var(--divider);
   background:var(--chat-alt);
 }
-.voice-main-footer .vc-btn {
-  display:flex; flex-direction:column; align-items:center; gap:4px;
-  padding:8px 14px; border-radius:8px;
-  font-size:11px; font-weight:600;
-  color:var(--text2); transition:all 120ms;
+.vc-top-icon {
+  width:40px; height:40px; flex:none; border-radius:12px;
+  display:grid; place-items:center;
+  background:color-mix(in srgb,var(--success) 14%,transparent);
+  color:var(--success);
 }
-.voice-main-footer .vc-btn:hover { background:var(--hover); color:var(--text); }
-.voice-main-footer .vc-btn .vc-i {
-  width:34px; height:34px; border-radius:8px;
-  background:var(--rail); display:grid; place-items:center;
-  font-size:18px; margin-bottom:4px; transition:all 120ms;
+.vc-top-text { flex:1; min-width:0; }
+.vc-top-row { display:flex; align-items:center; gap:8px; min-width:0; }
+.vc-top-name {
+  font-size:16px; font-weight:700; color:var(--text); min-width:0;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-.voice-main-footer .vc-btn:hover .vc-i { background:var(--accent); color:#fff; }
-.voice-main-footer .vc-btn.active { background:rgba(88,101,242,.15); color:var(--accent); }
-.voice-main-footer .vc-btn.active .vc-i { background:var(--accent); color:#fff; }
-.voice-main-footer .vc-btn.danger { color:var(--danger); }
-.voice-main-footer .vc-btn.danger .vc-i { background:rgba(218,55,60,.15); color:var(--danger); }
-.voice-main-footer .vc-btn.danger:hover .vc-i { background:var(--danger); color:#fff; }
-.voice-head {
-  padding:16px 20px 12px;
-  display:flex; align-items:center; gap:12px;
-  flex-shrink:0;
-  border-bottom:1px solid var(--divider);
+.vc-pill {
+  display:inline-flex; align-items:center; gap:6px; flex:none;
+  padding:2px 9px; border-radius:999px;
+  background:var(--elevated); color:var(--text2);
+  font-size:11px; font-weight:700; white-space:nowrap;
 }
-.vh-icon {
-  width:40px; height:40px; border-radius:12px;
-  background:rgba(35,165,90,.15); color:var(--success);
-  display:grid; place-items:center; font-size:20px;
-}
-.voice-head h2 { font-size:20px; font-weight:700; margin:0; }
-.voice-head .vsub { font-size:13px; color:var(--text2); margin-top:2px; margin-bottom:0; }
-.vstatus {
-  margin-left:auto;
-  display:inline-flex; align-items:center; gap:6px;
-  padding:4px 12px; border-radius:999px;
-  background:rgba(35,165,90,.15); color:var(--success);
-  font-size:12px; font-weight:600;
-}
-.vstatus .dot {
-  width:8px; height:8px; border-radius:50%;
+.vc-pill.live { background:color-mix(in srgb,var(--success) 16%,transparent); color:var(--success); }
+.vc-pill.live::before {
+  content:''; width:7px; height:7px; border-radius:50%;
   background:var(--success); animation:pulse 2s infinite;
 }
-.voice-duration {
-  margin-left:auto;
-  font-size:14px; font-weight:700;
-  font-variant-numeric:tabular-nums;
-  color:var(--text);
+.vc-timer { font-variant-numeric:tabular-nums; letter-spacing:.02em; }
+.vc-top-sub {
+  margin-top:3px; font-size:12px; color:var(--text2);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
-.voice-actions {
-  margin-top:12px;
-  display:flex; gap:8px;
+.vc-top-actions { flex:none; display:flex; align-items:center; gap:6px; }
+.vc-ping {
+  display:inline-flex; align-items:center; gap:7px; flex:none;
+  height:30px; padding:0 10px; border-radius:999px;
+  background:var(--elevated); color:var(--text2);
+  font-size:11px; font-weight:700; white-space:nowrap;
 }
-.voice-actions .btn-ghost {
-  display:flex; align-items:center; gap:6px;
+.vc-bars { display:inline-flex; align-items:flex-end; gap:2px; height:12px; }
+.vc-bars i { display:block; width:3px; border-radius:1px; background:currentColor; opacity:.25; }
+.vc-bars i:nth-child(1) { height:4px; }
+.vc-bars i:nth-child(2) { height:7px; }
+.vc-bars i:nth-child(3) { height:10px; }
+.vc-bars i:nth-child(4) { height:12px; }
+.vc-ping[data-quality="good"] { color:var(--success); }
+.vc-ping[data-quality="medium"] { color:var(--warn); }
+.vc-ping[data-quality="bad"] { color:var(--danger); }
+.vc-ping[data-quality="good"] .vc-bars i,
+.vc-ping[data-quality="medium"] .vc-bars i:nth-child(-n+2),
+.vc-ping[data-quality="bad"] .vc-bars i:nth-child(1) { opacity:1; }
+.vc-ghost {
+  display:inline-flex; align-items:center; gap:7px; flex:none;
+  height:34px; padding:0 13px; border-radius:8px;
+  background:var(--elevated); color:var(--text);
+  font-size:12px; font-weight:600;
+  transition:background 120ms,color 120ms;
 }
-.lk-voice { width:min(100%,980px); margin:0 auto; padding:4px 20px 24px; }
-.lk-toolbar {
-  display:flex; align-items:center; justify-content:space-between; gap:14px;
-  padding:14px 16px; background:var(--sidebar); border:1px solid var(--divider);
-  border-radius:10px 10px 0 0;
+.vc-ghost:hover { background:var(--hover); }
+
+/* ---------- сцена ---------- */
+.vc-stage {
+  flex:1; min-height:0; overflow-y:auto; padding:20px;
+  display:grid; gap:16px;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  align-content:center; justify-items:center;
 }
-.lk-room-title { min-width:0; }
-.lk-room-title strong { display:block; font-size:15px; }
-.lk-room-title small { display:block; color:var(--text2); margin-top:2px; }
-.lk-state { display:inline-flex; align-items:center; gap:7px; color:var(--text2); font-size:12px; white-space:nowrap; }
-.lk-state::before { content:''; width:8px; height:8px; border-radius:50%; background:var(--muted); }
-.lk-state.connected::before { background:var(--success); box-shadow:0 0 10px color-mix(in srgb,var(--success) 65%,transparent); }
-.lk-controls {
-  display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px;
-  padding:12px; background:var(--sidebar); border:1px solid var(--divider); border-top:0;
+.vc-tile {
+  position:relative; width:100%; max-width:380px; min-width:0;
+  aspect-ratio:16/10;
+  display:flex; align-items:center; justify-content:center;
+  border:2px solid transparent; border-radius:16px;
+  background:var(--rail); overflow:hidden;
+  transition:border-color 140ms,box-shadow 140ms;
 }
-.lk-control {
-  min-height:38px; padding:0 14px; border-radius:6px; background:var(--elevated);
-  color:var(--text); font-size:13px; font-weight:600; transition:background 120ms ease,transform 120ms ease;
+.vc-tile.speaking {
+  border-color:var(--success);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--success) 22%,transparent);
 }
-.lk-control:hover { background:var(--hover); transform:translateY(-1px); }
-.lk-control.primary { background:var(--accent); color:#fff; }
-.lk-control.primary:hover { background:var(--accent-h); }
-.lk-control.danger { background:var(--danger); color:#fff; }
-.lk-error { padding:10px 14px; margin:10px 0; border:1px solid color-mix(in srgb,var(--danger) 55%,transparent); border-radius:7px; background:color-mix(in srgb,var(--danger) 12%,var(--sidebar)); color:var(--text); }
-.lk-members { margin-top:14px; padding:16px; background:var(--sidebar); border:1px solid var(--divider); border-radius:10px; }
-.lk-section-title { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; color:var(--text2); font-size:11px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
-.lk-count { padding:3px 8px; border-radius:999px; background:var(--elevated); color:var(--text2); font-size:11px; letter-spacing:0; }
-.lk-member-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
-.lk-member {
-  display:flex; align-items:center; gap:12px; min-width:0; padding:12px;
-  border:1px solid var(--divider); border-radius:10px; background:var(--chat);
-  transition:border-color 140ms ease,background 140ms ease,box-shadow 140ms ease;
+.vc-av {
+  width:92px; height:92px; border-radius:50%;
+  display:grid; place-items:center; overflow:hidden; flex:none;
+  background:var(--lc,#5865f2); color:#fff;
+  font-size:34px; font-weight:700;
+  border:3px solid rgba(255,255,255,.07);
+  transition:border-color 140ms,box-shadow 140ms;
 }
-.lk-member:hover { background:var(--chat-alt); }
-.lk-member.speaking { border-color:var(--success); background:color-mix(in srgb,var(--success) 10%,var(--chat)); box-shadow:0 0 0 2px color-mix(in srgb,var(--success) 40%,transparent); }
-.lk-avatar { position:relative; display:grid; place-items:center; flex:0 0 52px; width:52px; height:52px; border:2px solid var(--divider); border-radius:50%; background:var(--lk-user-color,#5865f2); color:#fff; font-size:19px; font-weight:700; transition:box-shadow 140ms ease,border-color 140ms ease; }
-.lk-avatar.speaking, .lk-member.speaking .lk-avatar { border-color:var(--success); box-shadow:0 0 0 3px color-mix(in srgb,var(--success) 30%,transparent); }
-.lk-member-info { flex:1; min-width:0; }
-.lk-member-name { overflow:hidden; color:var(--text); font-size:14px; font-weight:650; text-overflow:ellipsis; white-space:nowrap; }
-.lk-member-state { margin-top:3px; color:var(--text2); font-size:11px; }
-.lk-member-tools { display:flex; align-items:center; gap:6px; color:var(--muted); }
-.lk-member-tool { width:30px; height:30px; display:grid; place-items:center; border-radius:6px; background:var(--elevated); font-size:13px; cursor:pointer; transition:all 100ms; }
-.lk-member-tool:hover { background:var(--hover); color:var(--text); }
-.lk-member-tool.voice { background:var(--rail); }
-.lk-member.speaking .lk-member-tool.voice { background:var(--success); color:#fff; }
-.lk-member-tool.mute { color:var(--danger); }
-.lk-member-tool.kick { color:var(--danger); }
-.user-panel .up-av.voice-speaking { outline:3px solid var(--success); outline-offset:2px; box-shadow:0 0 0 5px color-mix(in srgb,var(--success) 25%,transparent),0 0 18px color-mix(in srgb,var(--success) 50%,transparent) !important; }
-.user-panel .up-av.voice-speaking::before { content:'♪'; position:absolute; z-index:3; left:-5px; bottom:-4px; width:16px; height:16px; display:grid; place-items:center; border:2px solid var(--chat-alt); border-radius:50%; background:var(--success); color:#fff; font-size:10px; font-weight:800; line-height:1; }
-.lk-empty { padding:24px; text-align:center; color:var(--text2); font-size:13px; }
-.lk-stage { margin-top:14px; padding:16px; background:var(--sidebar); border:1px solid var(--divider); border-radius:10px; }
-.lk-video-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
-.lk-video-tile { min-width:0; overflow:hidden; border:1px solid var(--divider); border-radius:10px; background:var(--rail); }
-.lk-video-label { padding:8px 10px; color:var(--text2); font-size:12px; }
-.lk-video-tile video { display:block; width:100%; max-height:420px; aspect-ratio:16/9; background:#090a0d; object-fit:contain; }
-.lk-video-tile.speaking { box-shadow:0 0 0 2px var(--success); }
-.lk-video-tile .video-speak-indicator { position:absolute; top:8px; right:8px; width:10px; height:10px; border-radius:50%; background:var(--success); box-shadow:0 0 8px var(--success); }
-@media (max-width:640px) {
-  .lk-voice { padding:4px 10px 16px; }
-  .lk-toolbar { align-items:flex-start; flex-direction:column; }
-  .lk-member-grid { grid-template-columns:1fr; }
+.vc-av .avatar-picture { width:100%; height:100%; object-fit:cover; border-radius:inherit; }
+.vc-tile.speaking .vc-av {
+  border-color:var(--success);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--success) 28%,transparent);
+}
+.vc-tile.video { background:#000; max-width:560px; aspect-ratio:16/9; }
+.vc-tile.video .vc-av { display:none; }
+.vc-tile video {
+  display:block; width:100%; height:100%;
+  object-fit:cover; background:#000;
+}
+.vc-tile-foot {
+  position:absolute; left:10px; bottom:10px; right:10px;
+  display:flex; align-items:center; gap:8px;
+  padding:5px 9px; border-radius:8px;
+  background:rgba(0,0,0,.58); color:#fff;
+  font-size:12px; font-weight:600;
+}
+.vc-tile.video .vc-tile-foot { right:auto; max-width:calc(100% - 20px); }
+.vc-tile-name { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.vc-tile-tags { margin-left:auto; display:flex; align-items:center; gap:5px; flex:none; }
+.vc-tag {
+  display:inline-flex; align-items:center; justify-content:center;
+  width:20px; height:20px; border-radius:6px;
+  background:rgba(255,255,255,.16); color:#fff;
+}
+.vc-tag.bad { background:var(--danger); color:#fff; }
+.vc-empty {
+  grid-column:1/-1; align-self:center; text-align:center; padding:24px 12px;
+}
+.vc-empty-icon {
+  width:78px; height:78px; margin:0 auto 14px; border-radius:50%;
+  display:grid; place-items:center;
+  background:var(--elevated); color:var(--text2);
+}
+.vc-empty-title { font-size:15px; font-weight:700; color:var(--text); margin-bottom:5px; }
+.vc-empty-text { font-size:13px; color:var(--text2); line-height:1.5; max-width:440px; margin:0 auto; }
+.vc-error {
+  margin:14px 20px 0; padding:10px 14px; border-radius:10px;
+  border:1px solid color-mix(in srgb,var(--danger) 55%,transparent);
+  background:color-mix(in srgb,var(--danger) 12%,var(--chat-alt));
+  color:var(--text); font-size:13px;
 }
 
-.voice-main-footer .vc-btn .vc-pro {
-  position:absolute; top:-6px; right:-4px;
-  padding:1px 6px; border-radius:4px;
-  background:var(--pro); color:#fff;
-  font-size:8px; font-weight:800; letter-spacing:.06em;
+/* ---------- нижний док ---------- */
+.vc-dock {
+  flex-shrink:0; display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:14px 18px; border-top:1px solid var(--divider);
+  background:var(--chat-alt);
+}
+.vc-dock-btn {
+  width:46px; height:46px; border-radius:14px; flex:none;
+  display:grid; place-items:center;
+  background:var(--elevated); color:var(--text);
+  transition:background 120ms,color 120ms,transform 120ms;
+}
+.vc-dock-btn:hover { background:var(--hover); transform:translateY(-1px); }
+.vc-dock-btn.on { background:var(--accent); color:#fff; }
+.vc-dock-btn.off { background:color-mix(in srgb,var(--danger) 20%,transparent); color:var(--danger); }
+.vc-dock-sep { width:1px; height:28px; margin:0 6px; background:var(--divider); }
+.vc-hang {
+  height:46px; padding:0 20px; border-radius:14px;
+  display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  background:var(--danger); color:#fff;
+  font-size:13px; font-weight:700;
+  transition:background 120ms,transform 120ms;
+}
+.vc-hang:hover { background:var(--danger-h); transform:translateY(-1px); }
+.vc-hang.vc-join { background:var(--success); }
+.vc-hang.vc-join:hover { background:color-mix(in srgb,var(--success) 82%,#000); }
+.vc-hang:disabled, .vc-dock-btn:disabled { opacity:.45; cursor:not-allowed; transform:none; }
+.user-panel .up-av.voice-speaking { outline:3px solid var(--success); outline-offset:2px; box-shadow:0 0 0 5px color-mix(in srgb,var(--success) 25%,transparent),0 0 18px color-mix(in srgb,var(--success) 50%,transparent) !important; }
+.user-panel .up-av.voice-speaking::before { content:'♪'; position:absolute; z-index:3; left:-5px; bottom:-4px; width:16px; height:16px; display:grid; place-items:center; border:2px solid var(--chat-alt); border-radius:50%; background:var(--success); color:#fff; font-size:10px; font-weight:800; line-height:1; }
+.vc-ico { display:block; flex:none; }
+@media (max-width:820px) {
+  .vc-stage { grid-template-columns:1fr; padding:14px; }
+  .vc-top { padding:12px 14px; gap:10px; }
+  .vc-ghost { width:34px; padding:0; justify-content:center; }
+  .vc-ghost .vc-lbl { display:none; }
+  .vc-hang { padding:0 14px; }
+  .vc-hang .vc-lbl { display:none; }
 }
 
 /* ============================================================
@@ -2420,7 +2320,7 @@ const STATE = {
   quickSwitcherIndex: 0,
 };
 let LAUNCH_AT_LOGIN = { supported: false, enabled: false, busy: false };
-let APP_VERSION = '1.4.48';
+let APP_VERSION = '1.4.49';
 
 /* Локальный профиль клиента переживает перезапуск и не требует панели. */
 const AURORA_LOCAL_PROFILE_KEY = 'aurora_game_profile_v1';
@@ -3356,186 +3256,302 @@ function renderReactions(reacts, messageId, community) {
 }
 
 /* ---------- VOICE CHANNEL ---------- */
-function renderVoiceChannel(ch) {
-  if (ch.communityVoice) {
-    const dur = formatTime(STATE.callTimer || 0);
-    return `
-      <div class="voice-layout">
-        <div class="voice-sidebar">
-          <div class="voice-sidebar-header">
-            <div class="vh-icon">🔊</div>
-            <div class="vh-title">
-              <div class="ch-name">${escapeHtml(ch.name)}</div>
-              <div class="ch-topic">Голосовой канал игрового сообщества</div>
-            </div>
-            <div class="vh-actions">
-              <button class="vh-btn" onclick="voiceInvite()" title="Пригласить">👥</button>
-              <button class="vh-btn" onclick="voiceDevices()" title="Устройства">🎛️</button>
-            </div>
-          </div>
-          <div class="voice-sidebar-body">
-            <div class="vs-section">
-              <div class="vs-section-title">КТО В КОНАТЕ</div>
-              <div class="vs-members-list">
-                <div class="vs-member vs-member-empty">
-                  <div class="vs-member-av">—</div>
-                  <div class="vs-member-info">
-                    <div class="vs-member-name">Никто не в канале</div>
-                    <div class="vs-member-status">—</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="voice-sidebar-footer">
-            <button class="btn btn-ghost" onclick="leaveVoice()" style="width:100%;padding:6px 12px;">
-              <span>📞</span> Выйти
-            </button>
-          </div>
-        </div>
-        <div class="voice-main">
-          <div class="voice-main-header">
-            <div class="vh-icon">🔊</div>
-            <div class="vh-title">${escapeHtml(ch.name)}</div>
-            <div class="vh-actions">
-              <button class="vh-btn" onclick="voiceInvite()" title="Пригласить">👥</button>
-              <button class="vh-btn" onclick="voiceDevices()" title="Устройства">🎛️</button>
-            </div>
-          </div>
-          <div class="voice-main-body">
-            <div class="vs-quality">
-              <span class="vs-quality-label">Качество связи</span>
-              <span class="vs-quality-value" id="vs-quality-value">—</span>
-            </div>
-            <div class="vs-video-grid" id="vs-video-grid">
-              <div class="vs-empty">
-                <div class="vs-empty-icon">📹</div>
-                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:4px;">Видео и экран</div>
-                <div style="font-size:13px; color:var(--text2);">Здесь появятся камеры и трансляции участников</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="voice-main-footer">
-          <button class="vc-btn" onclick="toggleMute()" title="Микрофон">
-            <span class="vc-i">${STATE.muted ? '🔇' : '🎤'}</span>
-            <span>${STATE.muted ? 'Микрофон выкл' : 'Микрофон'}</span>
-          </button>
-          <button class="vc-btn" onclick="toggleDeafen()" title="Звук">
-            <span class="vc-i">${STATE.deafened ? '🔇' : '🎧'}</span>
-            <span>${STATE.deafened ? 'Звук выкл' : 'Звук'}</span>
-          </button>
-          <button class="vc-btn" onclick="toggleCamera()" title="Камера">
-            <span class="vc-i">📷</span>
-            <span>Камера</span>
-          </button>
-          <button class="vc-btn" onclick="toggleScreen()" title="Экран">
-            <span class="vc-i">🖥</span>
-            <span>Экран</span>
-          </button>
-          <button class="vc-btn danger" onclick="leaveVoice()" title="Выйти">
-            <span class="vc-i">📞</span>
-            <span>Выйти</span>
-          </button>
-        </div>
-      </div>`;
+/* A-940: экран голоса как в Discord.
+   Один компонент на три сценария: голосовой канал узла, голосовой
+   канал сообщества и страница «Голос и видео». Шапка (имя, статус,
+   таймер, пинг), сцена плиток и нижний док. Разметку собирают
+   voice*Markup(), говорящего и пинг дорисовывает voiceSurfaceSync(). */
+
+const VOICE_ICONS = {
+  sound: '<path d="M4 9.5h3L13 5v14L7 14.5H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a9 9 0 0 1 0 12"/>',
+  mic: '<rect x="9" y="3" width="6" height="10" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/><path d="M9 21h6"/>',
+  micOff: '<path d="M15 9.5V6a3 3 0 0 0-6 0v1.5"/><path d="M9 11.5V12a3 3 0 0 0 4.6 2.6"/><path d="M5.5 11a6.5 6.5 0 0 0 9.7 5.7"/><path d="M12 17.5V21"/><path d="M9 21h6"/><path d="M4 4l16 16"/>',
+  headphones: '<path d="M4.5 15v-3a7.5 7.5 0 0 1 15 0v3"/><path d="M4.5 14.5h2.2a1.3 1.3 0 0 1 1.3 1.3v3.9a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3z"/><path d="M19.5 14.5h-2.2a1.3 1.3 0 0 0-1.3 1.3v3.9a1.3 1.3 0 0 0 1.3 1.3h.9a1.3 1.3 0 0 0 1.3-1.3z"/>',
+  headphonesOff: '<path d="M4.5 15v-3a7.5 7.5 0 0 1 10.5-6.9"/><path d="M18.6 8.2a7.5 7.5 0 0 1 .9 3.8v3"/><path d="M4.5 14.5h2.2a1.3 1.3 0 0 1 1.3 1.3v3.9a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3z"/><path d="M4 4l16 16"/>',
+  camera: '<rect x="2.5" y="6.5" width="12" height="11" rx="2.5"/><path d="M14.5 11.2l6.2-3.3v8.2l-6.2-3.3z"/>',
+  cameraOff: '<path d="M12.3 6.5H5a2.5 2.5 0 0 0-2.5 2.5v6a2.5 2.5 0 0 0 2.5 2.5h7a2.5 2.5 0 0 0 2.5-2.5v-1.5"/><path d="M14.5 11.2l6.2-3.3v8.2l-3.1-1.6"/><path d="M4 4l16 16"/>',
+  screen: '<rect x="2.5" y="4" width="19" height="12.5" rx="2.5"/><path d="M8.5 20.5h7"/><path d="M12 16.5v4"/>',
+  phone: '<path d="M4.2 5.6C4.2 4.7 4.9 4 5.8 4h1.9c.7 0 1.2.4 1.4 1.1l.8 2.8c.2.6-.1 1.2-.6 1.5L8 10.6c.9 2.1 2.6 3.8 4.7 4.7l1.2-1.3c.3-.5 1-.8 1.6-.6l2.8.8c.7.2 1.1.7 1.1 1.4v1.9c0 .9-.7 1.6-1.6 1.6A16.6 16.6 0 0 1 4.2 5.6z"/>',
+  phoneOff: '<g transform="rotate(135 12 12)"><path d="M4.2 5.6C4.2 4.7 4.9 4 5.8 4h1.9c.7 0 1.2.4 1.4 1.1l.8 2.8c.2.6-.1 1.2-.6 1.5L8 10.6c.9 2.1 2.6 3.8 4.7 4.7l1.2-1.3c.3-.5 1-.8 1.6-.6l2.8.8c.7.2 1.1.7 1.1 1.4v1.9c0 .9-.7 1.6-1.6 1.6A16.6 16.6 0 0 1 4.2 5.6z"/></g>',
+  users: '<path d="M15.5 20v-1.4a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20"/><circle cx="9.2" cy="7.2" r="3.4"/><path d="M17 4.6a3.4 3.4 0 0 1 0 6.6"/><path d="M18.6 14.8a4 4 0 0 1 2.4 3.6V20"/>',
+  sliders: '<path d="M4 7h9"/><path d="M18.5 7H20"/><circle cx="15.5" cy="7" r="2.2"/><path d="M4 17h3.5"/><path d="M13 17h7"/><circle cx="9.5" cy="17" r="2.2"/>',
+};
+
+function voiceIco(name, size) {
+  const body = VOICE_ICONS[String(name || '')] || VOICE_ICONS.sound;
+  const px = Number(size) > 0 ? Math.round(Number(size)) : 18;
+  return '<svg class="vc-ico" width="' + px + '" height="' + px + '" viewBox="0 0 24 24" fill="none" ' +
+    'stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" ' +
+    'aria-hidden="true" focusable="false">' + body + '</svg>';
+}
+
+/* Канал, к которому относится голосовое состояние: активный, если он
+   голосовой, иначе тот, в который вошли (STATE.voiceChannelId). */
+function voiceChannelNow() {
+  const active = DATA.channels[STATE.activeChannel];
+  if (active && active.type === 'voice') return active;
+  const joined = STATE.voiceChannelId ? DATA.channels[STATE.voiceChannelId] : null;
+  return joined && joined.type === 'voice' ? joined : null;
+}
+
+/* Задержка до медиасервера приходит от медиамодуля (window.AURORA_STATE).
+   Неизвестное значение показываем словами, а не выдуманным нулём. */
+function voicePingInfo() {
+  const media = (window.AURORA_STATE && window.AURORA_STATE.media) || {};
+  const raw = media.rtt_ms;
+  const ms = (raw === null || raw === undefined || raw === '') ? NaN : Number(raw);
+  if (!isFinite(ms) || ms < 0) return { known: false, ms: null, quality: 'none', label: 'нет данных' };
+  const value = Math.round(ms);
+  const quality = value < 100 ? 'good' : value < 250 ? 'medium' : 'bad';
+  const label = quality === 'good' ? 'Хорошо' : quality === 'medium' ? 'Средне' : 'Плохо';
+  return { known: true, ms: value, quality: quality, label: label };
+}
+
+function voiceAvatarStyle(color) {
+  return /^#[0-9a-fA-F]{6}$/.test(String(color || '')) ? ' style="--lc:' + color + '"' : '';
+}
+
+function voicePeerUser(id, fallbackName) {
+  const user = DATA.users['game-' + id] || DATA.users[id] || null;
+  if (user) {
+    return {
+      name: user.name || fallbackName || id,
+      letter: user.letter || String(user.name || fallbackName || '?').slice(0, 1).toUpperCase(),
+      color: user.color || '#5865f2',
+      avatar: user.avatar || '',
+    };
   }
-  /* Участники и качество связи показываются только из медиасостояния узла. */
-  const participants = [{ ...DATA.users.me, speaking: false, muted: STATE.muted, tag: null, quality: 'good' }];
-  const media = window.AURORA_STATE && window.AURORA_STATE.media;
-  const count = media && Array.isArray(media.participants) ? media.participants.length : 0;
-  const rtt = media && Number.isFinite(Number(media.rtt_ms)) ? Number(media.rtt_ms) : null;
-  const quality = rtt !== null ? (rtt < 100 ? 'good' : rtt < 250 ? 'medium' : 'bad') : 'unknown';
-  const qualityLabel = quality === 'good' ? 'Отличное' : quality === 'medium' ? 'Среднее' : 'Плохое';
-  const qualityColor = quality === 'good' ? 'var(--success)' : quality === 'medium' ? 'var(--warn)' : 'var(--danger)';
-  return `
-    <div class="voice-layout">
-      <div class="voice-sidebar">
-        <div class="voice-sidebar-header">
-          <div class="vh-icon">🔊</div>
-          <div class="vh-title">
-            <div class="ch-name">${ch.name}</div>
-            <div class="ch-topic">${count} участников · ${media && media.connected ? 'голос подключён' : 'голос не подключён'}</div>
-          </div>
-          <div class="vh-actions">
-            <button class="vh-btn" onclick="voiceInvite()" title="Пригласить">👥</button>
-            <button class="vh-btn" onclick="voiceDevices()" title="Устройства">🎛️</button>
-          </div>
-        </div>
-        <div class="voice-sidebar-body">
-          <div class="vs-section">
-            <div class="vs-section-title">КТО В КОНАТЕ</div>
-            <div class="vs-members-list">
-              ${participants.map(p => `
-                <div class="vs-member ${p.speaking ? 'speaking' : ''} ${p.muted ? 'muted' : ''}"
-                     oncontextmenu="openUserCtx(event, ${inlineJsArg(p.id)})">
-                  <div class="vs-member-av" style="background:${p.color}">${profileAvatarMarkup(p)}</div>
-                  <div class="vs-member-info">
-                    <div class="vs-member-name">${escapeHtml(p.name)}${p.id === STATE.user.id ? ' (ты)' : ''}</div>
-                    <div class="vs-member-status">${p.muted ? 'Микрофон выкл' : p.speaking ? 'Говорит' : 'В канале'}</div>
-                  </div>
-                  <div class="vs-member-actions">
-                    <button class="vs-member-btn" data-mute-id="${escapeAttr(p.id)}" title="${p.muted ? 'Разрешить микрофон' : 'Заглушить'}">${p.muted ? '🔊' : '🔇'}</button>
-                    <button class="vs-member-btn vs-member-btn-kick" data-kick-id="${escapeAttr(p.id)}" title="Удалить из канала">✕</button>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        </div>
-        <div class="voice-sidebar-footer">
-          <button class="btn btn-ghost" onclick="leaveVoice()" style="width:100%;padding:6px 12px;">
-            <span>📞</span> Выйти
-          </button>
-        </div>
-      </div>
-      <div class="voice-main">
-        <div class="voice-main-header">
-          <div class="vh-icon">🔊</div>
-          <div class="vh-title">${ch.name}</div>
-          <div class="vh-actions">
-            <button class="vh-btn" onclick="voiceInvite()" title="Пригласить">👥</button>
-            <button class="vh-btn" onclick="voiceDevices()" title="Устройства">🎛️</button>
-          </div>
-        </div>
-        <div class="voice-main-body">
-          <div class="vs-quality">
-            <span class="vs-quality-label">Качество связи</span>
-            <span class="vs-quality-value" id="vs-quality-value" style="color:${qualityColor}">${rtt !== null ? rtt + ' мс' : '—'}</span>
-          </div>
-          <div class="vs-video-grid" id="vs-video-grid">
-            ${STATE.callTimer > 0 ? `
-              <div class="vs-video-tile">
-                <div class="vs-video-label">${escapeHtml(STATE.user.name || 'Вы')}</div>
-                <video id="vs-self-video" autoplay muted playsinline></video>
-              </div>
-            ` : ''}
-          </div>
-        </div>
-        <div class="voice-main-footer">
-          <button class="vc-btn ${STATE.muted ? 'active' : ''}" onclick="toggleMute()" title="Микрофон">
-            <span class="vc-i">${STATE.muted ? '🔇' : '🎤'}</span>
-            <span>${STATE.muted ? 'Микрофон выкл' : 'Микрофон'}</span>
-          </button>
-          <button class="vc-btn ${STATE.deafened ? 'active' : ''}" onclick="toggleDeafen()" title="Звук">
-            <span class="vc-i">${STATE.deafened ? '🔇' : '🎧'}</span>
-            <span>${STATE.deafened ? 'Звук выкл' : 'Звук'}</span>
-          </button>
-          <button class="vc-btn" onclick="toggleCamera()" title="Камера">
-            <span class="vc-i">📷</span>
-            <span>Камера</span>
-          </button>
-          <button class="vc-btn" onclick="toggleScreen()" title="Экран">
-            <span class="vc-i">🖥</span>
-            <span>Экран</span>
-          </button>
-          <button class="vc-btn danger" onclick="leaveVoice()" title="Выйти">
-            <span class="vc-i">📞</span>
-            <span>Выйти</span>
-          </button>
-        </div>
-      </div>
-  `;
+  const name = String(fallbackName || id || 'Участник');
+  return { name: name, letter: name.slice(0, 1).toUpperCase(), color: '#5865f2', avatar: '' };
+}
+
+/* Модель экрана. kind:
+   community — голосовой канал сообщества (живёт в комнате LiveKit),
+   channel   — голосовой канал узла (присутствие + медиа при подключении),
+   room      — страница «Голос и видео» без канала. */
+function voiceRoomModel(channel) {
+  const M = window.LiveKitMedia;
+  const lk = (M && M.state) || {};
+  const ch = channel === undefined ? (DATA.channels[STATE.activeChannel] || null) : channel;
+  let kind = 'room';
+  if (ch && ch.communityVoice) kind = 'community';
+  else if (ch && ch.type === 'voice') kind = 'channel';
+
+  let joined = false;
+  if (kind === 'community') joined = !!lk.joined && !!lk.community && lk.roomName === 'aurora-voice-' + ch.id;
+  else if (kind === 'channel') joined = !!STATE.inVoice && STATE.voiceChannelId === ch.id;
+  else joined = !!lk.joined && !lk.community;
+
+  const peers = (joined && M && kind !== 'channel') || (joined && M) ? (M.peers() || []) : [];
+  const list = Array.isArray(peers) ? peers : [];
+
+  let name = 'Голосовая комната';
+  if (kind !== 'room') name = String(ch.name || 'Голосовой канал');
+  const stateWord = joined ? 'вы в канале' : 'не подключено';
+  let subtitle = kind === 'room'
+    ? (lk.roomName ? 'Медиасервер Aurora · комната ' + lk.roomName : 'Микрофон и камера через медиасервер Aurora')
+    : (kind === 'community' ? 'Голосовой канал сообщества · ' : 'Голосовой канал · ') + stateWord;
+
+  return {
+    kind: kind,
+    channelId: ch ? String(ch.id) : '',
+    name: name,
+    subtitle: subtitle,
+    joined: joined,
+    peers: list,
+    timer: STATE.callTimer || 0,
+    muted: !!STATE.muted,
+    deafened: !!STATE.deafened,
+    micOn: joined && !!lk.mic && !STATE.muted,
+    camOn: joined && !!lk.cam,
+    screenOn: joined && !!lk.screen,
+    selfSpeaking: joined && !!lk.speaking,
+    error: String((lk && lk.error) || ''),
+    ping: voicePingInfo(),
+  };
+}
+
+function voiceSurfaceSig(model) {
+  const peers = model.peers.map(function (p) {
+    return [p.id, p.mic ? 1 : 0, p.cam ? 1 : 0, p.screen ? 1 : 0].join(':');
+  }).join('|');
+  return [
+    model.kind, model.channelId, model.joined ? 1 : 0,
+    model.micOn ? 1 : 0, model.camOn ? 1 : 0, model.screenOn ? 1 : 0,
+    model.deafened ? 1 : 0, model.name, model.error, peers,
+  ].join('~');
+}
+
+function voiceTopMarkup(model) {
+  const ping = model.ping;
+  return '<div class="vc-top">' +
+    '<div class="vc-top-icon">' + voiceIco('sound', 21) + '</div>' +
+    '<div class="vc-top-text">' +
+      '<div class="vc-top-row">' +
+        '<span class="vc-top-name">' + escapeHtml(model.name) + '</span>' +
+        (model.joined
+          ? '<span class="vc-pill live">на связи</span>' +
+            '<span class="vc-pill"><span class="vc-timer" id="vc-timer">' + formatTime(model.timer) + '</span></span>'
+          : '') +
+      '</div>' +
+      '<div class="vc-top-sub">' + escapeHtml(model.subtitle) + '</div>' +
+    '</div>' +
+    '<div class="vc-top-actions">' +
+      '<span class="vc-ping" id="vc-ping" data-quality="' + escapeAttr(ping.quality) + '">' +
+        '<span class="vc-bars"><i></i><i></i><i></i><i></i></span>' +
+        '<span id="vc-ping-val">' + (ping.known ? ping.ms + ' мс' : 'нет данных') + '</span>' +
+      '</span>' +
+      '<button class="vc-ghost" onclick="voiceInvite()" title="Пригласить">' +
+        voiceIco('users', 16) + '<span class="vc-lbl">Пригласить</span></button>' +
+      '<button class="vc-ghost" onclick="voiceDevices()" title="Устройства">' +
+        voiceIco('sliders', 16) + '<span class="vc-lbl">Устройства</span></button>' +
+    '</div>' +
+  '</div>';
+}
+
+function voiceTileTags(opts) {
+  let out = '';
+  if (!opts.mic) {
+    out += '<span class="vc-tag bad" title="Микрофон выключен">' + voiceIco('micOff', 13) + '</span>';
+  }
+  if (opts.cam) out += '<span class="vc-tag" title="Камера">' + voiceIco('camera', 13) + '</span>';
+  if (opts.screen) out += '<span class="vc-tag" title="Демонстрация экрана">' + voiceIco('screen', 13) + '</span>';
+  return '<span class="vc-tile-tags">' + out + '</span>';
+}
+
+function voiceTileMarkup(opts) {
+  const video = !!(opts.cam || opts.screen);
+  const attrs = opts.self ? ' data-vc-self="1"' : ' data-vc-tile="' + escapeAttr(opts.id) + '"';
+  const videoEl = video
+    ? (opts.self
+      ? '<video id="lk-self-video" autoplay muted playsinline></video>'
+      : '<video data-lk-peer="' + escapeAttr(opts.id) + '" autoplay playsinline></video>')
+    : '';
+  return '<div class="vc-tile' + (video ? ' video' : '') + (opts.speaking ? ' speaking' : '') + '"' + attrs + '>' +
+    videoEl +
+    '<div class="vc-av"' + voiceAvatarStyle(opts.color) + '>' + profileAvatarMarkup(opts.user) + '</div>' +
+    '<div class="vc-tile-foot">' +
+      '<span class="vc-tile-name">' + escapeHtml(opts.name) + '</span>' +
+      voiceTileTags(opts) +
+    '</div>' +
+  '</div>';
+}
+
+function voiceEmptyMarkup(model) {
+  let title = 'Никто не в канале';
+  let text = 'Нажмите «Подключиться» внизу — микрофон включится, и вас услышат участники канала.';
+  if (model.kind === 'room') {
+    text = 'Нажмите «Подключиться» — микрофон и камера пойдут через медиасервер Aurora. Порты открывать не нужно.';
+  } else if (model.joined) {
+    text = 'Вы в канале. Пригласите друзей кнопкой «Пригласить» — они появятся здесь.';
+  }
+  return '<div class="vc-empty">' +
+    '<div class="vc-empty-icon">' + voiceIco('sound', 32) + '</div>' +
+    '<div class="vc-empty-title">' + escapeHtml(title) + '</div>' +
+    '<div class="vc-empty-text">' + escapeHtml(text) + '</div>' +
+  '</div>';
+}
+
+function voiceStageMarkup(model) {
+  const tiles = [];
+  if (model.joined) {
+    const me = STATE.user || {};
+    tiles.push(voiceTileMarkup({
+      self: true, id: 'self', name: me.name || 'Вы', user: me, color: me.color,
+      speaking: model.selfSpeaking, mic: model.micOn, cam: model.camOn, screen: model.screenOn,
+    }));
+  }
+  model.peers.forEach(function (peer) {
+    const user = voicePeerUser(peer.id, peer.name);
+    tiles.push(voiceTileMarkup({
+      self: false, id: peer.id, name: user.name, user: user, color: user.color,
+      speaking: !!peer.speaking, mic: !!peer.mic, cam: !!peer.cam, screen: !!peer.screen,
+    }));
+  });
+  return '<div class="vc-stage">' + (tiles.length ? tiles.join('') : voiceEmptyMarkup(model)) + '</div>';
+}
+
+function voiceDockMarkup(model) {
+  const micOff = !model.micOn;
+  return '<div class="vc-dock">' +
+    '<button class="vc-dock-btn' + (micOff ? ' off' : '') + '" onclick="toggleMute()" ' +
+      'title="' + (micOff ? 'Включить микрофон' : 'Выключить микрофон') + '">' + voiceIco(micOff ? 'micOff' : 'mic', 20) + '</button>' +
+    '<button class="vc-dock-btn' + (model.deafened ? ' off' : '') + '" onclick="toggleDeafen()" ' +
+      'title="' + (model.deafened ? 'Включить звук' : 'Выключить звук') + '">' + voiceIco(model.deafened ? 'headphonesOff' : 'headphones', 20) + '</button>' +
+    '<span class="vc-dock-sep"></span>' +
+    '<button class="vc-dock-btn' + (model.camOn ? ' on' : '') + '" onclick="toggleCamera()" ' +
+      'title="' + (model.camOn ? 'Выключить камеру' : 'Включить камеру') + '">' + voiceIco(model.camOn ? 'camera' : 'cameraOff', 20) + '</button>' +
+    '<button class="vc-dock-btn' + (model.screenOn ? ' on' : '') + '" onclick="toggleScreen()" ' +
+      'title="' + (model.screenOn ? 'Остановить показ экрана' : 'Показать экран') + '">' + voiceIco('screen', 20) + '</button>' +
+    '<span class="vc-dock-sep"></span>' +
+    (model.joined
+      ? '<button class="vc-hang" onclick="leaveVoice()" title="Отключиться">' +
+          voiceIco('phoneOff', 18) + '<span class="vc-lbl">Отключиться</span></button>'
+      : '<button class="vc-hang vc-join" onclick="voiceJoinHere()" title="Подключиться">' +
+          voiceIco('phone', 18) + '<span class="vc-lbl">Подключиться</span></button>') +
+  '</div>';
+}
+
+function voiceShellMarkup(model) {
+  return '<div class="vc-shell">' + voiceTopMarkup(model) +
+    (model.error ? '<div class="vc-error">' + escapeHtml(model.error) + '</div>' : '') +
+    voiceStageMarkup(model) + voiceDockMarkup(model) + '</div>';
+}
+
+/* Точечные обновления: таймер, пинг, кольцо говорящего и видео.
+   Полная пересборка — только при смене состава или медиа-флагов. */
+function voiceSurfaceSync() {
+  const box = document.getElementById('lkBox');
+  if (!box) return;
+  const model = voiceRoomModel();
+  const sig = voiceSurfaceSig(model);
+  if (box.getAttribute('data-vc-sig') !== sig) {
+    box.setAttribute('data-vc-sig', sig);
+    box.innerHTML = voiceShellMarkup(model);
+  }
+  const timer = document.getElementById('vc-timer');
+  if (timer) timer.textContent = formatTime(STATE.callTimer || 0);
+  const ping = voicePingInfo();
+  const pill = document.getElementById('vc-ping');
+  if (pill) {
+    pill.setAttribute('data-quality', ping.quality);
+    pill.title = 'Задержка до медиасервера: ' + ping.label;
+    const val = document.getElementById('vc-ping-val');
+    if (val) val.textContent = ping.known ? ping.ms + ' мс' : 'нет данных';
+  }
+  const M = window.LiveKitMedia;
+  const selfTile = box.querySelector('[data-vc-self]');
+  if (selfTile && M && M.state) selfTile.classList.toggle('speaking', !!M.state.speaking);
+  Array.prototype.forEach.call(box.querySelectorAll('[data-vc-tile]'), function (tile) {
+    const id = tile.getAttribute('data-vc-tile');
+    const peer = model.peers.filter(function (p) { return String(p.id) === String(id); })[0];
+    if (peer) tile.classList.toggle('speaking', !!peer.speaking);
+  });
+  if (M && M.attachVideos) M.attachVideos(box);
+  if (M && M.attachSelfVideo) M.attachSelfVideo(box);
+}
+
+function voiceJoinHere() {
+  const M = window.LiveKitMedia;
+  if (!M) { toast('Медиа-модуль не загружен', 'bad'); return; }
+  const ch = voiceChannelNow();
+  if (ch && ch.communityVoice) { joinCommunityVoice(ch.id); return; }
+  if (ch && (!STATE.inVoice || STATE.voiceChannelId !== ch.id)) joinVoice(ch.id);
+  if (!M.state.joined) auroraCall('join');
+}
+
+function markVoiceChannelJoined(id) {
+  DATA.categories.forEach(function (cat) {
+    (cat.channels || []).forEach(function (c) {
+      if (c.type === 'voice') c.joined = (c.id === id);
+    });
+  });
+}
+
+function renderVoiceChannel(ch) {
+  const model = voiceRoomModel(ch);
+  return '<div class="vc-page"><div id="lkBox" class="vc-box" data-vc-sig="' +
+    escapeAttr(voiceSurfaceSig(model)) + '">' + voiceShellMarkup(model) + '</div></div>';
 }
 
 /* ---------- GAME CHANNEL ---------- */
@@ -4450,29 +4466,31 @@ function startDM(userId) {
 }
 
 function joinVoice(id) {
+  const already = !!(STATE.inVoice && STATE.voiceChannelId === id);
   STATE.activeChannel = id;
   STATE.inVoice = true;
   STATE.voiceChannelId = id;
-  // Mark voice channel as joined
-  DATA.categories.forEach(cat => {
-    cat.channels.forEach(c => {
-      if (c.type === 'voice') c.joined = (c.id === id);
-    });
-  });
+  markVoiceChannelJoined(id);
   renderAll();
-  toast('🔊 Подключено к голосовому каналу', 'success');
-  startCallTimer();
+  if (!already) {
+    toast('🔊 Подключено к голосовому каналу', 'success');
+    startCallTimer();
+  }
+  /* Присутствие и медиа — разное: подключение к комнате не просит микрофон,
+     дорожку публикует только кнопка дока. */
+  const media = window.LiveKitMedia;
+  if (media && !media.state.joined) auroraCall('join');
 }
 
 function leaveVoice() {
   stopCallTimer();
   STATE.inVoice = false;
   STATE.voiceChannelId = null;
-  DATA.categories.forEach(cat => {
-    cat.channels.forEach(c => { if (c.type === 'voice') c.joined = false; });
-  });
-  toast('📞 Вышел из голосового канала');
-  switchChannel('general');
+  markVoiceChannelJoined(null);
+  const media = window.LiveKitMedia;
+  if (media && media.state.joined) media.leave();
+  toast('📞 Вы вышли из голосового канала');
+  renderAll();
 }
 
 function escapeJs(s) {
@@ -4505,13 +4523,19 @@ function formatTime(s) {
 function startCallTimer() {
   stopCallTimer();
   STATE.callTimer = 0;
+  const paintTimer = function () {
+    const text = formatTime(STATE.callTimer);
+    const el = document.getElementById('callTimer');
+    if (el) el.textContent = text;
+    const vc = document.getElementById('vc-timer');
+    if (vc) vc.textContent = text;
+    const legacy = document.getElementById('voice-duration');
+    if (legacy) legacy.textContent = text;
+  };
+  paintTimer();
   STATE.callTimerId = setInterval(function () {
     STATE.callTimer += 1;
-    const el = document.getElementById('callTimer');
-    if (el) el.textContent = formatTime(STATE.callTimer);
-    if (document.getElementById('voice-duration')) {
-      document.getElementById('voice-duration').textContent = formatTime(STATE.callTimer);
-    }
+    paintTimer();
   }, 1000);
 }
 function stopCallTimer() {
@@ -4535,21 +4559,62 @@ function voiceDevices() {
 function toggleMute() {
   STATE.muted = !STATE.muted;
   document.getElementById('btnMic')?.classList.toggle('off', STATE.muted);
+  const media = window.LiveKitMedia;
+  if (media && media.state.joined) {
+    if (STATE.muted) {
+      if (media.setMute) media.setMute(true);
+    } else {
+      if (STATE.deafened) {
+        STATE.deafened = false;
+        if (media.setDeafened) media.setDeafened(false);
+        document.getElementById('btnDeaf')?.classList.toggle('off', false);
+      }
+      if (media.state.mic) { if (media.setMute) media.setMute(false); }
+      else if (media.setMic) media.setMic(true).catch(function (e) {
+        toast(media.mediaWhy ? media.mediaWhy(e) : (e && e.message) || 'микрофон не ответил', 'bad');
+      });
+    }
+  }
   toast(STATE.muted ? '🔇 Микрофон выключен' : '🎤 Микрофон включён');
   renderSidebar();
-  if (STATE.inVoice) renderMain();
+  voiceSurfaceSync();
 }
 
 function toggleDeafen() {
   STATE.deafened = !STATE.deafened;
   document.getElementById('btnDeaf')?.classList.toggle('off', STATE.deafened);
+  const media = window.LiveKitMedia;
+  if (media && media.setDeafened) media.setDeafened(STATE.deafened);
   if (STATE.deafened && !STATE.muted) {
     STATE.muted = true;
     document.getElementById('btnMic')?.classList.toggle('off', true);
+    if (media && media.state.joined && media.setMute) media.setMute(true);
   }
-  toast(STATE.deafened ? '🔇 Звук выключен' : '🔊 Звук включён');
+  toast(STATE.deafened ? '🔇 Звук и микрофон выключены' : '🔊 Звук включён');
   renderSidebar();
-  if (STATE.inVoice) renderMain();
+  voiceSurfaceSync();
+}
+
+/* A-940: камера и показ экрана раньше вызывались из разметки, но самих
+   функций в файле не было — кнопки молча ничего не делали. */
+function toggleCamera() {
+  const media = window.LiveKitMedia;
+  if (!media) { toast('Медиа-модуль не загружен', 'bad'); return; }
+  if (!media.state.joined) { auroraCall('cam'); return; }
+  const next = !media.state.cam;
+  Promise.resolve(media.setCam(next)).catch(function (e) {
+    toast(media.mediaWhy ? media.mediaWhy(e) : (e && e.message) || 'камера не ответила', 'bad');
+  }).then(function () { voiceSurfaceSync(); });
+}
+
+function toggleScreen() {
+  const media = window.LiveKitMedia;
+  if (!media) { toast('Медиа-модуль не загружен', 'bad'); return; }
+  if (!media.state.joined) { auroraCall('screen'); return; }
+  const next = !media.state.screen;
+  Promise.resolve(media.setScreen(next)).catch(function (e) {
+    toast(media.mediaWhy ? media.mediaWhy(e) : (e && e.message) || 'экран не отдался', 'bad');
+  }).then(function () { voiceSurfaceSync(); });
 }
 
 /* ---------- MESSAGES ---------- */
@@ -7628,6 +7693,10 @@ async function joinCommunityVoice(channelId) {
       if (media.state.community && media.state.identity === grant.identity) await media.leave();
       return;
     }
+    STATE.inVoice = true;
+    STATE.voiceChannelId = String(channel.id);
+    markVoiceChannelJoined(String(channel.id));
+    renderAll();
     toast('Вы в голосовом канале «' + channel.name + '»', 'ok');
     startCallTimer();
   } catch (e) {
@@ -7925,6 +7994,8 @@ function renderMediaChannel() {
           <div class="sub">Ваш микрофон и камера — и честный ответ, кто слышит</div>
         </div>
 
+        <div id="lkBox" class="vc-box vc-embed" data-vc-sig=""></div>
+
         ${M.error ? `<div class="status-line bad"><div class="sl-dot"></div>
           <div class="sl-text">Не получилось: ${escapeHtml(M.error)}</div></div>` : ''}
 
@@ -7982,96 +8053,29 @@ function renderMediaChannel() {
       </div>
     </div>
   `;
-    /* Блок комнаты LiveKit рисуем сразу после канала: он зависит
-       от того, вошли мы в комнату или нет. */
-    return html + '<div id="lkBox"></div>';  /* A-881 */
+    /* A-940: контейнер комнаты стоит выше, сразу после шапки страницы. */
+    return html;  /* A-881 */
 }
-function liveKitMemberMarkup(id, name, avatarUser, speaking, mic, camera, screen, self) {
-    const profile = avatarUser || {};
-    const safeUser = {
-      letter: profile.letter || Array.from(String(name || '?'))[0],
-      avatar: profile.avatar || '',
-    };
-    const color = /^#[0-9a-fA-F]{6}$/.test(profile.color || '') ? profile.color : '#5865f2';
-    return '<div class="lk-member' + (speaking ? ' speaking' : '') + '" data-lk-member="' + escapeAttr(id) + '">' +
-      '<div class="lk-avatar" style="--lk-user-color:' + color + '">' + profileAvatarMarkup(safeUser) + '</div>' +
-      '<div class="lk-member-info"><div class="lk-member-name">' + escapeHtml(name || 'Участник') +
-      (self ? ' <span style="color:var(--muted);font-weight:500">вы</span>' : '') + '</div>' +
-      '<div class="lk-member-state">' + (speaking ? 'говорит' : (mic ? 'микрофон включён' : 'в комнате')) + '</div></div>' +
-      '<div class="lk-member-tools">' +
-      '<span class="lk-member-tool voice' + (mic ? '' : ' muted') + '" title="' + (mic ? 'Микрофон включён' : 'Микрофон выключен') + '">♬</span>' +
-      (camera ? '<span class="lk-member-tool" title="Камера">▣</span>' : '') +
-      (screen ? '<span class="lk-member-tool" title="Демонстрация экрана">▱</span>' : '') +
-      '</div></div>';
-}
-
+/* A-940: экран голоса собирает voiceSurfaceSync() — один компонент на все
+   сценарии. Здесь только догружаем устройства и просим синк обновить DOM. */
 function renderLiveKit() {
-    const M = window.LiveKitMedia;
-    const box = document.getElementById('lkBox');
-    if (!box || !M) return;
-    /* A-932: список устройств грузился только ПОСЛЕ включения микрофона
-       (mediaLoadDevices вызывался из mediaStart). Из-за этого вкладка
-       показывала «устройство не найдено / система видит: 0», хотя
-       enumerateDevices() честно отдаёт микрофон (замер: Razer Kraken V3 X,
-       разрешения granted, дорожка получена). Теперь спрашиваем систему
-       при открытии вкладки — один раз. */
-    if (!AURORA_MEDIA.devicesLoaded) {
-      AURORA_MEDIA.devicesLoaded = true;
-      if (typeof mediaLoadDevices === 'function') {
-        Promise.resolve(mediaLoadDevices()).then(function () {
-          if (typeof renderMain === 'function') renderMain();
-        });
-      }
+  /* A-932: список устройств грузился только ПОСЛЕ включения микрофона
+     (mediaLoadDevices вызывался из mediaStart). Из-за этого вкладка
+     показывала «устройство не найдено / система видит: 0», хотя
+     enumerateDevices() честно отдаёт микрофон (замер: Razer Kraken V3 X,
+     разрешения granted, дорожка получена). Теперь спрашиваем систему
+     при открытии вкладки — один раз. */
+  if (!AURORA_MEDIA.devicesLoaded) {
+    AURORA_MEDIA.devicesLoaded = true;
+    if (typeof mediaLoadDevices === 'function') {
+      Promise.resolve(mediaLoadDevices()).then(function () {
+        if (typeof renderMain === 'function') renderMain();
+      });
     }
-    const st = M.state;
-    const activeVoiceChannel = DATA.channels[STATE.activeChannel];
-    const communityVoice = !!(activeVoiceChannel && activeVoiceChannel.communityVoice);
-    const expectedCommunityRoom = communityVoice ? 'aurora-voice-' + String(activeVoiceChannel.id) : '';
-    const joinedActiveRoom = st.joined && (!communityVoice ||
-      st.community && st.roomName === expectedCommunityRoom);
-    const people = joinedActiveRoom ? M.peers() : [];
-    const screens = joinedActiveRoom ? M.screens() : [];
-    const videos = joinedActiveRoom ? M.videos() : [];
-
-    const roomLabel = communityVoice && activeVoiceChannel ? activeVoiceChannel.name : st.roomName;
-    const selfCard = joinedActiveRoom
-      ? liveKitMemberMarkup(st.identity, STATE.user.name || 'Вы', STATE.user, st.speaking, !!st.mic, !!st.cam, !!st.screen, true)
-      : '';
-    const peerCards = people.map(function (peer) {
-      const profile = DATA.users['game-' + peer.id] || DATA.users[peer.id] || {};
-      return liveKitMemberMarkup(peer.id, profile.name || peer.name, profile, peer.speaking,
-        peer.mic, peer.cam, peer.screen, false);
-    }).join('');
-    const videoTiles = (st.cam || st.screen)
-      ? '<div class="lk-video-tile"><div class="lk-video-label">' + escapeHtml(STATE.user.name || 'Вы') + (st.screen ? ' · экран' : ' · ваша камера') + '</div><video id="lk-self-video" autoplay muted playsinline></video></div>' : '';
-    const remoteTiles = videos.map(function (video) {
-      const profile = DATA.users['game-' + video.id] || DATA.users[video.id] || {};
-      return '<div class="lk-video-tile"><div class="lk-video-label">' + escapeHtml(profile.name || video.name) +
-        (video.screen ? ' · экран' : ' · камера') + '</div><video data-lk-peer="' + escapeAttr(video.id) + '" autoplay playsinline></video></div>';
-    }).join('');
-    box.innerHTML = '<section class="lk-voice">' +
-      '<div class="lk-toolbar"><div class="lk-room-title"><strong>' + escapeHtml(roomLabel || 'Голосовой канал') +
-      '</strong><small>' + (joinedActiveRoom ? 'Голосовой канал · участники слышат вас в реальном времени' : 'Подключитесь, чтобы говорить и видеть участников') +
-      '</small></div><span class="lk-state' + (joinedActiveRoom ? ' connected' : '') + '">' +
-      (joinedActiveRoom ? 'Подключено' : (st.joined ? 'Другая комната' : 'Не подключено')) + '</span></div>' +
-      (st.error ? '<div class="lk-error">' + escapeHtml(st.error) + '</div>' : '') +
-      '<div class="lk-controls">' + (joinedActiveRoom
-        ? '<button class="lk-control danger" onclick="LiveKitMedia.leave()">Отключиться</button>' +
-          '<button class="lk-control" onclick="LiveKitMedia.setMic(' + (st.mic ? 'false' : 'true') + ')">' + (st.mic ? 'Выключить микрофон' : 'Включить микрофон') + '</button>' +
-          '<button class="lk-control" onclick="LiveKitMedia.setCam(' + (st.cam ? 'false' : 'true') + ')">' + (st.cam ? 'Выключить камеру' : 'Включить камеру') + '</button>' +
-          '<button class="lk-control" onclick="LiveKitMedia.setScreen(' + (st.screen ? 'false' : 'true') + ')">' + (st.screen ? 'Остановить показ' : 'Показать экран') + '</button>'
-        : (communityVoice
-          ? '<button class="lk-control primary" onclick="joinCommunityVoice(\'' + escapeAttr(activeVoiceChannel.id) + '\')">Подключиться к голосу</button>'
-          : '<button class="lk-control primary" onclick="auroraCall(\'join\')">Подключиться к комнате</button>')) +
-      '</div><section class="lk-members"><div class="lk-section-title"><span>Участники в голосе</span><span class="lk-count">' + (people.length + (joinedActiveRoom ? 1 : 0)) +
-      '</span></div>' + (joinedActiveRoom && (selfCard || peerCards)
-        ? '<div class="lk-member-grid">' + selfCard + peerCards + '</div>'
-        : '<div class="lk-empty">' + (joinedActiveRoom ? 'Вы в комнате. Пригласите друзей в этот канал.' : 'Здесь появятся участники после подключения.') + '</div>') +
-      '</section>' + ((videoTiles || remoteTiles) ? '<section class="lk-stage"><div class="lk-section-title"><span>Камера и демонстрация</span></div><div class="lk-video-grid">' + videoTiles + remoteTiles + '</div></section>' : '') +
-      '</section>';
-    M.attachVideos(box);
-    if (M.attachSelfVideo) M.attachSelfVideo(box);
   }
+  voiceSurfaceSync();
+}
+
 function mediaStop() {
   if (AURORA_MEDIA.meterTimer) { clearInterval(AURORA_MEDIA.meterTimer); AURORA_MEDIA.meterTimer = null; }
   if (AURORA_MEDIA.stream) {

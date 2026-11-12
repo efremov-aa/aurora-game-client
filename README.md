@@ -6,8 +6,8 @@
 вылизывает каждый день. Голос, видео, чат, серверы, друзья и вложения живут в одном
 окне и работают без VPN и без «танцев с бубном» вокруг блокировок.
 
-Текущая версия: **1.4.48** — котик наконец научился обновляться сам: проверил,
-скачал, перезапустился и снова мурчит.
+Текущая версия: **1.4.49** — котик переделал голосовой экран как в Discord:
+плитки участников, живая шапка с таймером и пингом, нижний док с кнопками.
 
 ---
 
@@ -34,14 +34,14 @@
 - Блокировка нежелательных профилей
 
 ### 🔊 Голос и видео
+- **Голосовой экран в стиле Discord**: шапка канала с таймером и пингом, сцена плиток
+  с круглыми аватарами и зелёным кольцом говорящего, нижний док с кнопками
 - Голосовые каналы через LiveKit SFU — котик слышит всех
-- Камера и демонстрация экрана
+- Камера и демонстрация экрана — плитка видео разворачивается на всю сцену
 - Индикатор говорящего в реальном времени
-- **Таймер звонка** — сколько уже сидим в канале
-- **Качество связи** у каждого участника: зелёный котик — всё хорошо, красный — плохо
-- **Мьют и кик участника** прямо из карточки в канале
-- **Приглашение в звонок** и список устройств ввода/вывода
-- Карточки участников с аватарами, статусом и пульсацией, когда человек говорит
+- Пинга-пилюля с качеством связи: зелёная — хорошо, жёлтая — терпимо, красная — плохо
+- Кнопки «Пригласить» и «Устройства» прямо в шапке канала
+- Один компонент на три сценария: голосовой канал сервера, канал сообщества и страница «Голос и видео»
 
 ### 📺 Совместный просмотр
 - Очередь прямых ссылок на видео (MP4, WebM)
@@ -70,7 +70,7 @@
 
 ### Вариант 1 — установщик (рекомендует котик)
 
-1. Скачайте `AuroraGame-Setup-1.4.48.exe` из [Releases](https://github.com/efremov-aa/aurora-game-client/releases)
+1. Скачайте `AuroraGame-Setup-1.4.49.exe` из [Releases](https://github.com/efremov-aa/aurora-game-client/releases)
 2. Запустите — установщик спросит права администратора
 3. Выберите папку (по умолчанию `Program Files\Aurora Game`)
 4. Поставьте галочку «Создать ярлык на рабочем столе», если хочется
@@ -85,7 +85,7 @@
 2. Распакуйте в любую папку
 3. Запустите `AuroraGame.exe`
 
-Архив около 169 МБ, внутри Electron и медиасервер LiveKit — котик тащит всё с собой.
+Архив около 178 МБ, внутри Electron и медиасервер LiveKit — котик тащит всё с собой.
 
 ---
 
@@ -174,16 +174,17 @@ python tools/verify_portable.py electron/dist/AuroraGame-win32-x64.zip
 Meow! Aurora Game is a Discord-style gaming messenger: voice, video, chat, servers,
 friends and attachments in one window — no VPN, no workarounds.
 
-Current version: **1.4.48** — the cat finally learned to update itself.
+Current version: **1.4.49** — the cat rebuilt the voice screen like Discord:
+tiles, live header with timer and ping, bottom dock.
 
 ## Features
 
 - **Chat** — text channels, DMs, reactions, edits, threads, attachments up to 1 MB
 - **Servers** — categories, text and voice channels, roles, invites, bans
 - **Friends** — search, requests, online status, blocking
-- **Voice & Video** — LiveKit SFU, camera, screen share, speaking indicator,
-  call timer, per-participant connection quality, mute and kick from the member card,
-  invite to call, input/output device picker
+- **Voice & Video** — Discord-style voice screen (header with timer and ping,
+  participant tiles with speaking ring, bottom control dock), LiveKit SFU,
+  camera, screen share, invite to call, input/output device picker
 - **Watch Together** — up to 50 direct video links, playback synced via LiveKit data channel
 - **Looks** — dark and light themes, seasonal themes, custom avatar, color and bio
 - **Security** — nickname-only signup, profile token in encrypted Windows storage,
@@ -192,7 +193,7 @@ Current version: **1.4.48** — the cat finally learned to update itself.
 
 ## Install
 
-**Installer:** download `AuroraGame-Setup-1.4.48.exe` from
+**Installer:** download `AuroraGame-Setup-1.4.49.exe` from
 [Releases](https://github.com/efremov-aa/aurora-game-client/releases), run it,
 pick a folder, launch from the Start menu.
 

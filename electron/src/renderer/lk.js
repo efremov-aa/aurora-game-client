@@ -28,6 +28,7 @@
     mic: null,           // MediaStreamTrack
     cam: null,
     screen: null,
+    deafened: false,     // весь входящий звук выключен
     remote: {},          // id -> {audio: MediaStream, video: MediaStream, info: {}}
     tokenUrl: '/api/media/token',
     serverUrl: 'ws://127.0.0.1:7880',
@@ -80,6 +81,8 @@
       try { slot.audio = new window.LivekitClient.RemoteAudioTrack(track); } catch (e) { return; }
       slot.audioRaw = track;
       slot.audioEl = slot.audio.attach();
+      /* A-940: если звук выключен, новые дорожки приходят уже приглушёнными. */
+      if (slot.audioEl) slot.audioEl.muted = !!LK.deafened;
     } else if (track.kind === 'video') {
       if (slot.video) { try { slot.video.detach(); } catch (e) { /* предыдущая камера уже закрыта */ } }
       slot.video = new window.LivekitClient.RemoteVideoTrack(track);
@@ -290,6 +293,18 @@
     paint();
   }
 
+  /* Глушим весь входящий звук. Дорожки не отписываем: это локальное
+     приглушение элемента, публикация остальных участников не страдает. */
+  function setDeafened(on) {
+    LK.deafened = !!on;
+    Object.keys(LK.remote).forEach(function (k) {
+      var slot = LK.remote[k];
+      if (slot && slot.audioEl) slot.audioEl.muted = LK.deafened;
+    });
+    paint();
+    return Promise.resolve();
+  }
+
   /* ---------- камера ---------- */
   function setCam(on) {
     if (!LK.joined) return Promise.reject(new Error('сначала войдите в комнату'));
@@ -394,7 +409,7 @@
     Object.keys(LK.remote).forEach(function (k) {
       var s = LK.remote[k];
       if (s.audio) { try { s.audio.detach(); } catch (e) {} }
-      s.audio = null; s.video = null;
+      s.audio = null; s.video = null; s.audioEl = null;
     });
     paint();
   }
@@ -557,6 +572,7 @@
     leave: leave,
     setMic: setMic,
     setMute: setMute,
+    setDeafened: setDeafened,
     setCam: setCam,
     setScreen: setScreen,
     stopAll: stopAll,
