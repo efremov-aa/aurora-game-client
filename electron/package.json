@@ -1,14 +1,15 @@
 {
   "name": "aurora-game",
-  "version": "1.4.49",
+  "version": "1.4.50",
   "private": true,
   "description": "Aurora Game - игровой клиент Aurora с публичным игровым сообществом",
   "main": "src/main/main.js",
   "scripts": {
     "start": "electron .",
-    "test": "npm run test:community-cursor && npm run test:livekit && npm run test:window-security && npm run test:inline-handlers && npm run test:localserver-security && npm run test:community-session && npm run test:community-dm-state && npm run test:community-proxy && npm run test:community-token-store",
+    "test": "npm run test:community-cursor && npm run test:livekit && npm run test:voice-mic && npm run test:window-security && npm run test:inline-handlers && npm run test:localserver-security && npm run test:community-session && npm run test:community-dm-state && npm run test:community-proxy && npm run test:community-token-store",
     "test:community-cursor": "node ../tests/test_community_cursor.js",
     "test:livekit": "node ../tests/test_livekit_renderer.js",
+    "test:voice-mic": "node ../tests/test_voice_mic_toggle.js",
     "test:window-security": "node ../tests/test_window_security.js",
     "test:inline-handlers": "node ../tests/test_renderer_inline_handlers.js",
     "test:localserver-security": "node ../tests/test_localserver_origin_security.js",

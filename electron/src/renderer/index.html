@@ -2320,7 +2320,7 @@ const STATE = {
   quickSwitcherIndex: 0,
 };
 let LAUNCH_AT_LOGIN = { supported: false, enabled: false, busy: false };
-let APP_VERSION = '1.4.49';
+let APP_VERSION = '1.4.50';
 
 /* Локальный профиль клиента переживает перезапуск и не требует панели. */
 const AURORA_LOCAL_PROFILE_KEY = 'aurora_game_profile_v1';
@@ -2781,7 +2781,7 @@ function renderUserPanel() {
         <div class="up-name">${escapeHtml(STATE.user.name)}</div>
         <div class="up-status">${customTxt}</div>
       </div>
-      <button class="up-btn ${STATE.muted ? 'off' : ''}" id="btnMic" onclick="toggleMute()" title="Микрофон (Ctrl+M)">🎤</button>
+      <button class="up-btn ${voiceMicIsOn() ? '' : 'off'}" id="btnMic" onclick="toggleMute()" title="Микрофон (Ctrl+M)">🎤</button>
       <button class="up-btn ${STATE.deafened ? 'off' : ''}" id="btnDeaf" onclick="toggleDeafen()" title="Наушники">🎧</button>
       <button class="up-btn" onclick="openModal('settingsModal')" title="Настройки">⚙️</button>
     </div>
@@ -3329,6 +3329,16 @@ function voicePeerUser(id, fallbackName) {
    community — голосовой канал сообщества (живёт в комнате LiveKit),
    channel   — голосовой канал узла (присутствие + медиа при подключении),
    room      — страница «Голос и видео» без канала. */
+/* A-947: единственный источник правды «микрофон звучит».
+   Дорожка опубликована и не заглушена — иконка показывает микрофон,
+   иначе перечёркнутый. Раньше это считалось в двух местах по-разному:
+   док смотрел на дорожку, а кнопка в профиле — только на STATE.muted. */
+function voiceMicIsOn() {
+  const media = window.LiveKitMedia;
+  const lk = (media && media.state) || {};
+  return !!lk.joined && !!lk.mic && !STATE.muted;
+}
+
 function voiceRoomModel(channel) {
   const M = window.LiveKitMedia;
   const lk = (M && M.state) || {};
@@ -3362,7 +3372,7 @@ function voiceRoomModel(channel) {
     timer: STATE.callTimer || 0,
     muted: !!STATE.muted,
     deafened: !!STATE.deafened,
-    micOn: joined && !!lk.mic && !STATE.muted,
+    micOn: joined && voiceMicIsOn(),
     camOn: joined && !!lk.cam,
     screenOn: joined && !!lk.screen,
     selfSpeaking: joined && !!lk.speaking,
@@ -3556,7 +3566,7 @@ function renderVoiceChannel(ch) {
 
 /* ---------- GAME CHANNEL ---------- */
 /* A-907: рендер сценария подключения. Раньше здесь была заглушка:
-   подсеть «10.3.7.0/24», код из DATA.invites (пуст) и участники
+   выдуманная подсеть, код из DATA.invites (пуст) и участники
    vasya/masha/petya — людей, которых в Aurora нет. Клик по каналу
    падал с TypeError. Теперь всё из window.AURORA_STATE.game. */
 function renderGameChannel(ch) {
@@ -4556,10 +4566,53 @@ function voiceDevices() {
   renderSettingsTab('voice');
 }
 
+/* A-947: включение микрофона — отдельный путь, а не инверсия mute.
+   Пока дорожка не опубликована, «выключать» нечего: старый toggleMute()
+   просто переворачивал STATE.muted, поэтому первый клик по кнопке
+   «Включить микрофон» наоборот его глушил, а перечёркнутая иконка
+   оставалась на месте. Теперь сначала публикуем дорожку. */
+function voiceEnableMic() {
+  const media = window.LiveKitMedia;
+  if (!media || !media.state.joined) {
+    toast('Сначала подключитесь к голосовому каналу', 'bad');
+    return;
+  }
+  STATE.muted = false;
+  if (STATE.deafened) {
+    STATE.deafened = false;
+    if (media.setDeafened) media.setDeafened(false);
+    document.getElementById('btnDeaf')?.classList.toggle('off', false);
+  }
+  document.getElementById('btnMic')?.classList.toggle('off', false);
+  if (media.state.mic) {
+    if (media.setMute) media.setMute(false);
+    toast('🎤 Микрофон включён');
+  } else if (media.setMic) {
+    media.setMic(true).then(function () {
+      renderSidebar();
+      voiceSurfaceSync();
+      toast('🎤 Микрофон включён');
+    }).catch(function (e) {
+      toast(media.mediaWhy ? media.mediaWhy(e) : (e && e.message) || 'микрофон не ответил', 'bad');
+    });
+  }
+  renderSidebar();
+  voiceSurfaceSync();
+}
+
 function toggleMute() {
+  const media = window.LiveKitMedia;
+  const published = !!(media && media.state && media.state.mic);
+  /* «Выключить» можно только реально опубликованную дорожку. Во всех
+     остальных случаях нажатие означает «включить» (в том числе первую
+     публикацию) — иначе иконка навсегда остаётся перечёркнутой. */
+  const turningOff = !STATE.muted && published;
+  if (!turningOff && !published) {
+    voiceEnableMic();
+    return;
+  }
   STATE.muted = !STATE.muted;
   document.getElementById('btnMic')?.classList.toggle('off', STATE.muted);
-  const media = window.LiveKitMedia;
   if (media && media.state.joined) {
     if (STATE.muted) {
       if (media.setMute) media.setMute(true);
