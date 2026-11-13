@@ -1257,17 +1257,26 @@ a:hover { text-decoration:underline; }
 .vc-stage {
   flex:1; min-height:0; overflow-y:auto; padding:20px;
   display:grid; gap:16px;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  align-content:center; justify-items:center;
+  grid-template-columns:repeat(var(--vc-cols,1),minmax(0,1fr));
+  /* A-948: сетка занимает ВСЮ площадь сцены. Раньше стояло align-content:center
+     с жёсткими max-width у плиток (380/560) и aspect-ratio, из-за чего сцена
+     пустовала сверху и снизу, а плитки жались в центр — «как будто ограничивает». */
+  grid-auto-rows:minmax(150px,1fr);
+  align-content:stretch; justify-items:stretch;
 }
 .vc-tile {
-  position:relative; width:100%; max-width:380px; min-width:0;
-  aspect-ratio:16/10;
+  position:relative; width:100%; max-width:none; min-width:0;
+  min-height:150px;
   display:flex; align-items:center; justify-content:center;
   border:2px solid transparent; border-radius:16px;
   background:var(--rail); overflow:hidden;
   transition:border-color 140ms,box-shadow 140ms;
 }
+/* Одинокая плитка в нечётном наборе не должна липнуть к левому краю:
+   при двух колонках центрируем её на половинной ширине. */
+.vc-stage.vc-odd .vc-tile:last-child { grid-column:1 / -1; justify-self:center; width:calc(50% - 8px); }
+/* Один участник — плитка на всю сцену и крупный аватар, как в Discord. */
+.vc-tile:only-child .vc-av { width:132px; height:132px; font-size:48px; }
 .vc-tile.speaking {
   border-color:var(--success);
   box-shadow:0 0 0 3px color-mix(in srgb,var(--success) 22%,transparent);
@@ -1285,7 +1294,7 @@ a:hover { text-decoration:underline; }
   border-color:var(--success);
   box-shadow:0 0 0 4px color-mix(in srgb,var(--success) 28%,transparent);
 }
-.vc-tile.video { background:#000; max-width:560px; aspect-ratio:16/9; }
+.vc-tile.video { background:#000; max-width:none; }
 .vc-tile.video .vc-av { display:none; }
 .vc-tile video {
   display:block; width:100%; height:100%;
@@ -2320,7 +2329,7 @@ const STATE = {
   quickSwitcherIndex: 0,
 };
 let LAUNCH_AT_LOGIN = { supported: false, enabled: false, busy: false };
-let APP_VERSION = '1.4.50';
+let APP_VERSION = '1.4.51';
 
 /* Локальный профиль клиента переживает перезапуск и не требует панели. */
 const AURORA_LOCAL_PROFILE_KEY = 'aurora_game_profile_v1';
@@ -3462,6 +3471,15 @@ function voiceEmptyMarkup(model) {
   '</div>';
 }
 
+/* A-948: число колонок по составу. Один ряд «колбасками» на всю высоту
+   смотрится плохо, поэтому для 3–4 участников берём 2 колонки (2×2),
+   дальше — ближайший к квадрату вариант. */
+function voiceGridCols(count) {
+  if (count <= 1) return 1;
+  if (count === 2) return 2;
+  return Math.ceil(Math.sqrt(count));
+}
+
 function voiceStageMarkup(model) {
   const tiles = [];
   if (model.joined) {
@@ -3478,7 +3496,9 @@ function voiceStageMarkup(model) {
       speaking: !!peer.speaking, mic: !!peer.mic, cam: !!peer.cam, screen: !!peer.screen,
     }));
   });
-  return '<div class="vc-stage">' + (tiles.length ? tiles.join('') : voiceEmptyMarkup(model)) + '</div>';
+  const cols = voiceGridCols(tiles.length);
+  const odd = cols === 2 && tiles.length % 2 === 1 ? ' vc-odd' : '';
+  return '<div class="vc-stage' + odd + '" style="--vc-cols:' + cols + '">' + (tiles.length ? tiles.join('') : voiceEmptyMarkup(model)) + '</div>';
 }
 
 function voiceDockMarkup(model) {

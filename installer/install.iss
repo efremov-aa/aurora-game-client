@@ -4,7 +4,7 @@
 #define MyAppName "Aurora Game"
 #define MyAppPublisher "efremov-aa"
 #define MyAppURL "https://github.com/efremov-aa/aurora-game-client"
-#define MyAppVersion "1.4.50"
+#define MyAppVersion "1.4.51"
 #define MyAppExeName "AuroraGame.exe"
 
 [Setup]
