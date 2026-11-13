@@ -6,8 +6,8 @@
 вылизывает каждый день. Голос, видео, чат, серверы, друзья и вложения живут в одном
 окне и работают без VPN и без «танцев с бубном» вокруг блокировок.
 
-Текущая версия: **1.4.51** — голосовой экран занимает всё окно, а не жмётся
-плитками в центре с пустыми полями; на головном сервере починено создание серверов.
+Текущая версия: **1.4.52** — звонок поднимается даже при включённом системном
+прокси: сигналинг и медиа к своему серверу идут напрямую, а не через прокси Windows.
 
 ---
 
@@ -70,7 +70,7 @@
 
 ### Вариант 1 — установщик (рекомендует котик)
 
-1. Скачайте `AuroraGame-Setup-1.4.51.exe` из [Releases](https://github.com/efremov-aa/aurora-game-client/releases)
+1. Скачайте `AuroraGame-Setup-1.4.52.exe` из [Releases](https://github.com/efremov-aa/aurora-game-client/releases)
 2. Запустите — установщик спросит права администратора
 3. Выберите папку (по умолчанию `Program Files\Aurora Game`)
 4. Поставьте галочку «Создать ярлык на рабочем столе», если хочется
@@ -174,8 +174,8 @@ python tools/verify_portable.py electron/dist/AuroraGame-win32-x64.zip
 Meow! Aurora Game is a Discord-style gaming messenger: voice, video, chat, servers,
 friends and attachments in one window — no VPN, no workarounds.
 
-Current version: **1.4.51** — the voice stage fills the whole window instead of
-sitting in the middle with empty bands, and server creation works again on the hub.
+Current version: **1.4.52** — calls connect even with a system proxy enabled:
+signalling and media to our own server go direct instead of through the Windows proxy.
 
 ## Features
 
@@ -193,7 +193,7 @@ sitting in the middle with empty bands, and server creation works again on the h
 
 ## Install
 
-**Installer:** download `AuroraGame-Setup-1.4.51.exe` from
+**Installer:** download `AuroraGame-Setup-1.4.52.exe` from
 [Releases](https://github.com/efremov-aa/aurora-game-client/releases), run it,
 pick a folder, launch from the Start menu.
 

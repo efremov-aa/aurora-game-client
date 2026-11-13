@@ -1,6 +1,6 @@
 {
   "name": "aurora-game",
-  "version": "1.4.51",
+  "version": "1.4.52",
   "private": true,
   "description": "Aurora Game - игровой клиент Aurora с публичным игровым сообществом",
   "main": "src/main/main.js",

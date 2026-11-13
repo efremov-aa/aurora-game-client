@@ -448,7 +448,65 @@ function registerPermissions(sess) {
   });
 }
 
-app.whenReady().then(() => {
+/* 1.4.52: системный прокси не должен перехватывать наш собственный сервер.
+   Windows отдаёт Chromium прокси из Internet Settings. Если у пользователя
+   включён прокси (нередко это VPN-клиент на своём же сервере), то WebSocket
+   сигналинга LiveKit уходит в него, не доживает до 101 и падает по таймауту
+   15 с («room connection has timed out (signal)»), хотя напрямую порт 7443
+   открыт. Проверено на живом клиенте: mode 'system' собственные
+   proxyBypassRules игнорирует, а 'fixed_servers' с тем же прокси и списком
+   обхода отдаёт нашему хосту DIRECT. Поэтому системный прокси сохраняем для
+   чужих адресов, а игровой сервер и SFU (тот же хост) пускаем напрямую. */
+function mediaDirectHosts() {
+  const hosts = new Set(['127.0.0.1', 'localhost', '::1']);
+  const addOrigin = (value) => {
+    try {
+      const host = new URL(String(value || '')).hostname.replace(/^\[|\]$/g, '').trim();
+      if (host) hosts.add(host);
+    } catch (_) { /* пустой или битый адрес — просто пропускаем */ }
+  };
+  addOrigin(localserver.COMMUNITY_ORIGIN);
+  try {
+    addOrigin(localserver.loadConfig().communityOrigin);
+  } catch (_) { /* конфиг ещё не создан — хватит адреса по умолчанию */ }
+  return Array.from(hosts);
+}
+
+/* Системный прокси узнаём у самого Chromium: при mode 'system' resolveProxy
+   отдаёт то, что реально применено (включая PAC). Берём первый PROXY. */
+async function systemProxyAddress(sess) {
+  try {
+    const resolved = String(await sess.resolveProxy('https://example.com/') || '');
+    const first = resolved.split(';').map((part) => part.trim())
+      .find((part) => part.startsWith('PROXY '));
+    return first ? first.slice(6).trim() : '';
+  } catch (_) {
+    return '';
+  }
+}
+
+async function applyMediaProxyBypass(sess) {
+  const bypass = mediaDirectHosts().join(',');
+  const proxy = await systemProxyAddress(sess);
+  try {
+    if (proxy) {
+      await sess.setProxy({
+        mode: 'fixed_servers',
+        proxyRules: 'http=' + proxy + ';https=' + proxy,
+        proxyBypassRules: bypass,
+      });
+      console.log('Прокси: ' + proxy + ' для остальных, напрямую: ' + bypass);
+    } else {
+      await sess.setProxy({ mode: 'direct' });
+      console.log('Прокси: системного нет, ходим напрямую');
+    }
+  } catch (err) {
+    /* Не роняем запуск: без обхода звонок может не подняться, но чат работает. */
+    console.warn('Прокси: не удалось настроить обход (' + bypass + '):', err && err.message || err);
+  }
+}
+
+app.whenReady().then(async () => {
   app.setName('Aurora Game');
   /* Недочёт 1: меню File/Edit/View/Window — оно от Electron, выглядит как
      в браузере и просто занимает полосу сверху. Убираем совсем. */
@@ -457,6 +515,7 @@ app.whenReady().then(() => {
   createTray();
 
   const sess = session.defaultSession;
+  await applyMediaProxyBypass(sess);
   registerPermissions(sess);
   registerIpc();
 
